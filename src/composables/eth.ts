@@ -29,11 +29,12 @@ const useEth = () => {
     blockNumber.value = parseInt(data.result, 16)
   }
 
-  setInterval(getCurrentBlockNumber, 10000)
+  const interval = setInterval(getCurrentBlockNumber, 10000)
 
   getCurrentBlockNumber()
   return {
     blockNumber,
+    clear: () => clearInterval(interval),
   }
 }
 

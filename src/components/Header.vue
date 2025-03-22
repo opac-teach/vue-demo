@@ -18,34 +18,12 @@
             />
           </svg>
         </div>
-        <ul
-          tabindex="0"
-          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-        >
-          <li
-            class=""
-            @click="(e: Event) => (e.target as HTMLElement)?.blur()"
-            v-for="route in routes"
-            :key="route.path"
-          >
-            <RouterLink :to="route.path" active-class="bg-neutral text-neutral-content">
-              {{ route.name }}
-            </RouterLink>
-          </li>
-        </ul>
+        <NavMobile />
       </div>
       <img alt="Vue logo" class="w-8 mx-2" src="@/assets/logo.svg" width="125" height="125" />
       <h1 class="text-2xl">Vue Demo</h1>
     </div>
-    <div class="navbar-center hidden md:flex">
-      <ul class="menu menu-horizontal px-1">
-        <li v-for="route in routes" :key="route.path">
-          <RouterLink as="li" :to="route.path" active-class="bg-neutral text-neutral-content">
-            {{ route.name }}
-          </RouterLink>
-        </li>
-      </ul>
-    </div>
+    <Nav />
     <div class="navbar-end">
       <DarkModeSwitch />
     </div>
@@ -53,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router'
+import Nav from '@/components/Nav.vue'
+import NavMobile from '@/components/NavMobile.vue'
 import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
-const router = useRouter()
-const routes = router.getRoutes().filter((route) => !route.meta?.hide)
 </script>

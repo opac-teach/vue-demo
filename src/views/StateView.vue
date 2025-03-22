@@ -26,12 +26,18 @@ import UsernameStoreComponentSource from '@/components/state/UsernameStore.vue?r
 import UsernameStoreSource from '@/stores/username.ts?raw' with { type: 'text' }
 
 import Examples from '@/components/Examples.vue'
+import { parse } from '@/lib/md'
 
 const examples = [
   {
     name: 'Reactivity',
-    description:
-      'Afin que les données affichées soit réactives (affichage mis à jour quand la donnée change), il faut utiliser des variables de type réactives.',
+    description: parse(`
+Afin que les données affichées soit réactives (affichage mis à jour quand la donnée change), il faut utiliser des variables de type réactives.
+
+En Vue, on utilise soit\`ref\` soit \`reactive\` pour créer des variables réactives.
+
+Pour une variable de type \`ref\` , dans la partie script, on lit/ecrit les valeurs avec \`variable.value\` et dans le template, on utilise juste \`variable\`.
+    `),
     components: [Reactivity],
     sources: [ReactivitySource],
   },

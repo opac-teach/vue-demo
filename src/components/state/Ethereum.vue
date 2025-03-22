@@ -7,6 +7,11 @@
 
 <script setup lang="ts">
 import useEth from '@/composables/eth'
+import { onUnmounted } from 'vue'
 
-const { blockNumber } = useEth()
+const { blockNumber, clear } = useEth()
+
+onUnmounted(() => {
+  clear()
+})
 </script>

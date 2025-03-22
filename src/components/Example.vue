@@ -1,7 +1,9 @@
 <template>
-  <div class="border-b border-gray-200 last:border-b-0 pb-4 last:pb-0">
-    <h2 class="my-4">{{ name }}</h2>
-    <p v-if="description" class="mb-4" v-html="description" />
+  <div class="border-b border-gray-200 last:border-b-0 pb-4 last:pb-0 flex flex-col">
+    <div class="flex flex-col prose max-w-none">
+      <h2>{{ name }}</h2>
+      <div v-if="description" class="mb-4" v-html="description" />
+    </div>
     <div class="flex flex-row gap-4">
       <div v-if="components.length > 0" :class="sources.length > 0 ? 'w-1/2' : 'w-full'">
         <div

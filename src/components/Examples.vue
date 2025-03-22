@@ -1,5 +1,5 @@
 <template>
-  <div class="flex prose flex-col gap-4 container max-w-full">
+  <div class="flex flex-col gap-4 container max-w-full w-full">
     <Example
       v-for="(example, index) in examples"
       :key="index"

@@ -32,7 +32,7 @@ const examples = [
     components: [],
     sources: [CountComposableSource, CountComposableTestSource],
     sourcesNames: ['Count', 'Count.test'],
-    sourcesLangs: ['vue', 'typescript'],
+    sourcesLangs: ['typescript', 'typescript'],
   },
   {
     name: 'Counter Store',
@@ -40,7 +40,7 @@ const examples = [
     components: [],
     sources: [CounterStoreSource, CounterStoreTestSource],
     sourcesNames: ['Counter', 'Counter.test'],
-    sourcesLangs: ['vue', 'typescript'],
+    sourcesLangs: ['typescript', 'typescript'],
   },
   {
     name: 'End 2 End Tests',

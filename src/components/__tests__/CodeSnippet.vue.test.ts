@@ -1,21 +1,16 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 
-import { mount, type ComponentMountingOptions } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import CodeSnippet from '@/components/CodeSnippet.vue'
-import hljsVuePlugin from '@highlightjs/vue-plugin'
-
-function getWrapper(opts: ComponentMountingOptions<typeof CodeSnippet>) {
-  return mount(CodeSnippet, {
-    global: {
-      plugins: [hljsVuePlugin],
-    },
-    ...opts,
-  })
-}
+import { setActivePinia, createPinia } from 'pinia'
 
 describe('CodeSnippet', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
   it('renders name div when name prop is provided', () => {
-    const wrapper = getWrapper({
+    const wrapper = mount(CodeSnippet, {
       props: {
         source: 'console.log("test")',
         name: 'Test Name',
@@ -27,7 +22,7 @@ describe('CodeSnippet', () => {
   })
 
   it('does not render name div when name prop is not provided', () => {
-    const wrapper = getWrapper({
+    const wrapper = mount(CodeSnippet, {
       props: {
         source: 'console.log("test")',
       },

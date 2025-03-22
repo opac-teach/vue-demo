@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  success: Boolean,
-  error: Boolean,
-})
+defineProps<{
+  success?: boolean
+  error?: boolean
+}>()
 </script>

@@ -17,30 +17,50 @@ import SlotsSource from '@/components/fundamentals/Slots.vue?raw'
 import SlotSource from '@/components/fundamentals/Slot.vue?raw'
 import Examples from '@/components/Examples.vue'
 import type { ExampleProps } from '@/components/Example.vue'
-
+import { parse } from '@/lib/md'
 const examples: Array<ExampleProps> = [
   {
     name: 'Template Syntax',
-    description:
-      "Un composant est composé d'une partie template et une partie script. <br/> La partie template est la partie HTML qui sera affichée. <br/> La partie script est la partie JavaScript qui contient la logique du composant.",
     components: [TemplateSyntax],
     sources: [TemplateSyntaxSource],
+    description: parse(`
+Chaque fichier \`.vue\` est un composant, qui est separé en une partie template et une partie script.
+
+La partie template est la partie HTML qui sera affichée.
+
+La partie script est la partie JavaScript qui contient la logique du composant.`),
   },
   {
     name: 'Components and slots',
-    description:
-      "Les composants sont des blocks d'interface réutilisables. On aura un fichier par composant, et celui-ci sera nommé en PascalCase. <br/>Afin d'utiliser un composant, on doit d'abord l'importer.  <br/ Les slots sont des emplacements dans un composant qui peuvent etre remplis par le parent avec du contenu. <br/> Les slots permettent d'injecter du contenu a l'interieur d'un composant",
+    description: parse(`
+Les composants sont des blocks d'interface réutilisables.
+
+On aura un fichier par composant, et celui-ci sera nommé en PascalCase. 
+
+Afin d'utiliser un composant, on doit d'abord l'importer.  
+
+Les slots sont des emplacements dans un composant qui peuvent etre remplis par le parent avec du contenu qui sera remplacé à l'emplacement de \`<slot/>\`. 
+`),
     components: [Slots],
     sources: [SlotsSource, SlotSource],
     sourcesNames: ['Slots', 'Slot'],
   },
   {
+    name: 'Class Bindings',
+    description: parse(`
+Les classes peuvent etre bindées à des variables dans le template de differentes façons.
+    `),
+    components: [PassingProps],
+    sources: [ClassesBindingSource],
+    sourcesNames: ['ClassesBinding'],
+  },
+  {
     name: 'Passing Props',
     description:
       'Les props sont des variables passées à un composant. Elles sont typées et peuvent être optionnelles ou obligatoires. <br/> Les props sont passées à un composant dans le template, et doivent être definies avec <code>defineProps</code>',
-    components: [PassingProps],
-    sources: [PassingPropsSource, ClassesBindingSource],
-    sourcesNames: ['PassingProps', 'ClassesBinding'],
+    components: [],
+    sources: [PassingPropsSource],
+    sourcesNames: ['PassingProps'],
   },
   {
     name: 'Template Refs',

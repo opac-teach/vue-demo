@@ -49,6 +49,7 @@ const examples = [
     components: [CountComposable, CountComposable],
     sources: [CountComposableComponentSource, CountComposableSource],
     sourcesNames: ['CountComposableComponent', 'CountComposable'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'Count Store',
@@ -57,6 +58,7 @@ const examples = [
     components: [CountStore, CountStore],
     sources: [CountStoreComponentSource, CountStoreSource],
     sourcesNames: ['CountStoreComponent', 'CountStore'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'Ethereum composable',
@@ -65,12 +67,14 @@ const examples = [
     components: [Ethereum],
     sources: [EthereumSource, EthereumComposableSource],
     sourcesNames: ['Ethereum', 'EthereumComposable'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'Username store with localStorage',
     components: [UsernameStore],
     sources: [UsernameStoreComponentSource, UsernameStoreSource],
     sourcesNames: ['UsernameStoreComponent', 'UsernameStore'],
+    sourcesLangs: ['vue', 'typescript'],
   },
 ]
 </script>

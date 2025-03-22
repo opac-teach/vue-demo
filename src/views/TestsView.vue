@@ -24,6 +24,7 @@ const examples = [
     components: [],
     sources: [SlotSource, SlotTestSource],
     sourcesNames: ['Slot', 'Slot.test'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'Count Composable',
@@ -31,6 +32,7 @@ const examples = [
     components: [],
     sources: [CountComposableSource, CountComposableTestSource],
     sourcesNames: ['Count', 'Count.test'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'Counter Store',
@@ -38,6 +40,7 @@ const examples = [
     components: [],
     sources: [CounterStoreSource, CounterStoreTestSource],
     sourcesNames: ['Counter', 'Counter.test'],
+    sourcesLangs: ['vue', 'typescript'],
   },
   {
     name: 'End 2 End Tests',
@@ -46,6 +49,7 @@ const examples = [
     components: [],
     sources: [E2ETests],
     sourcesNames: ['app.spec.ts'],
+    sourcesLangs: ['typescript'],
   },
 ]
 </script>

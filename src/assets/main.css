@@ -2,7 +2,7 @@
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
   themes:
-    cupcake --default,
+    emerald --default,
     synthwave --prefersdark;
 }
 

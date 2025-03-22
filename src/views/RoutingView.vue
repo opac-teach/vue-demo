@@ -16,6 +16,7 @@ const examples = [
     components: [],
     sources: [RouterSource, LayoutSource, RewriteSource],
     sourcesNames: ['Router', 'Layout', 'vercel.json'],
+    sourcesLangs: ['typescript', 'vue', 'json'],
   },
 ]
 </script>

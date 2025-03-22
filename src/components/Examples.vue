@@ -8,6 +8,7 @@
       :components="example.components"
       :sources="example.sources"
       :sources-names="example.sourcesNames"
+      :sources-langs="example.sourcesLangs"
     />
   </div>
 </template>

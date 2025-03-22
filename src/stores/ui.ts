@@ -11,7 +11,13 @@ export const useUIStore = defineStore('ui', () => {
   }
 
   function getDarkMode() {
-    isDarkMode.value = localStorage.getItem('darkMode') === 'true'
+    const storedPreference = localStorage.getItem('darkMode')
+    if (storedPreference !== null) {
+      isDarkMode.value = storedPreference === 'true'
+    } else {
+      // Use system preference as default
+      isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
     document.documentElement.classList.toggle('dark', isDarkMode.value)
   }
 

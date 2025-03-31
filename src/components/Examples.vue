@@ -1,15 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 container max-w-full w-full">
-    <Example
-      v-for="(example, index) in examples"
-      :key="index"
-      :name="example.name"
-      :description="example.description"
-      :components="example.components"
-      :sources="example.sources"
-      :sources-names="example.sourcesNames"
-      :sources-langs="example.sourcesLangs"
-    />
+    <Example v-for="(example, index) in examples" :key="index" v-bind="example" />
   </div>
 </template>
 

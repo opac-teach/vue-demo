@@ -18,6 +18,7 @@ import SlotSource from '@/components/fundamentals/Slot.vue?raw'
 import Examples from '@/components/Examples.vue'
 import type { ExampleProps } from '@/components/Example.vue'
 import { parse } from '@/lib/md'
+
 const examples: Array<ExampleProps> = [
   {
     name: 'Template Syntax',

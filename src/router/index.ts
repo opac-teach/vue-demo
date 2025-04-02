@@ -24,10 +24,9 @@ const router = createRouter({
       meta: { sayHello: true },
     },
     {
-      path: '/state',
-      name: 'State',
-      component: () => import('@/views/StateView.vue'),
-    },
+      path: '/exercices',
+      name: 'Exercices',
+      component: () => import('@/views/ExercicesView.vue'),    },
     {
       path: '/tests',
       name: 'Tests',

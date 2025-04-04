@@ -1,65 +1,55 @@
 <script setup lang="ts">
-import { reactive, ref, watch, onMounted } from 'vue'
+import { reactive, ref, watch, onMounted, toRaw } from 'vue'
 
-// Define interface for the form data structure
 interface CreateCoin {
-  nom: string
+  name: string
   symbol: string
   description: string
   logoUrl: string
 }
 
-// Type for errors (key: field name, value: error message or null)
 type Errors = Record<string, string | null>
 
-// Reactive form object
 const form = reactive<CreateCoin>({
-  nom: '',
+  name: '',
   symbol: '',
   description: '',
   logoUrl: ''
 })
 
-// Reactive errors object
-const errors = reactive<Errors>({
-  nom: null,
+let errors = reactive<Errors>({
+  name: null,
   symbol: null,
   description: null,
   logoUrl: null
 })
 
-// Border color for validation
 const borderColor = ref('')
 
-// Watch for form changes and validate them
 watch(form, (newForm) => {
-  // Validate 'nom'
-  if (newForm.nom.length < 4 || newForm.nom.length > 12) {
-    errors.nom = 'Le nom doit faire entre 4 et 12 caractères'
+  form.symbol = newForm.symbol.toUpperCase()
+  if (newForm.name.length < 4 || newForm.name.length > 12) {
+    errors.name = 'Le nom doit faire entre 4 et 12 caractères'
   } else {
-    errors.nom = null
-    form.nom = newForm.nom.charAt(0).toUpperCase() + newForm.nom.slice(1) // Capitalize first letter
+    errors.name = null
+    form.name = newForm.name.charAt(0).toUpperCase() + newForm.name.slice(1)
   }
 
-  // Validate 'symbol'
   if (newForm.symbol.length < 2 || newForm.symbol.length > 4) {
     errors.symbol = 'Le symbole doit faire entre 2 et 4 caractères'
   } else {
     errors.symbol = null
   }
 
-  // Validate 'description'
   if (newForm.description.length > 1000) {
     errors.description = 'La description doit faire maximum 1000 caractères'
   } else {
     errors.description = null
   }
 
-  // Set border color for symbol input
   borderColor.value = newForm.symbol.length > 4 ? 'red' : 'green'
 })
 
-// Fetch data from the API on mounted
 async function getData() {
   const url = "https://nuxt-demo-blush.vercel.app/api/get-memecoins";
   try {
@@ -68,54 +58,68 @@ async function getData() {
       throw new Error(`Response status: ${response.status}`);
     }
     const json = await response.json();
-    return json
+    return json;
   } catch (error) {
     console.error(error);
   }
 }
 
-// Reactive reference for coin list
-const coinList = ref<any[]>([]); // any[] because we don't have exact types for coin list items
+const coinList = ref<any[]>([]);
 
-// Fetch coin list when the component is mounted
 onMounted(async () => {
   coinList.value = await getData();
 })
 
-// Handle form submission
 function publishCoin() {
   if (Object.values(errors).some((error) => error !== null)) {
     console.log('Formulaire invalide')
     return
   }
   console.log('Formulaire valide', form)
+  const formRaw = toRaw(form);
+  console.log(formRaw);
+  fetch("https://nuxt-demo-blush.vercel.app/api/create-memecoin", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formRaw)
+  }).then(async () => {
+    const data = await getData();
+    coinList.value = data;
+  })
+  .catch((error) => {
+    console.error("Erreur lors de l'envoi du formulaire:", error);
+  });
+  form.name = "";
+  form.symbol = "";
+  form.description = "";
+  form.logoUrl = "";
 }
 </script>
 
 <template>
   <div>
     <ul>
-      <!-- Displaying the last coin from coinList -->
-      <li v-for="coin in coinList.slice(-1)" :key="coin.symbol" class="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+      <li v-for="coin in coinList.slice(-3)" :key="coin.symbol" class="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow">
         <div class="flex-shrink-0">
           <img :src="coin.logoUrl" alt="Logo du Memecoin" class="w-16 h-16 object-cover rounded-full" />
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-semibold text-gray-800">{{ coin.name }}</h3>
-          <p class="text-sm text-gray-600">Symbole: <span class="font-medium text-gray-900">{{ coin.symbol }}</span></p>
-          <p class="text-sm text-gray-600">Propriétaire: <span class="font-medium text-gray-900">{{ coin.owner }}</span></p>
+          <h3 class="text-xl font-semibold text-green-800">{{ coin.name }}</h3>
+          <p class="text-sm text-green-600">Symbole: <span class="font-medium text-red-900">{{ coin.symbol }}</span></p>
+          <p class="text-sm text-green-600">Propriétaire: <span class="font-medium text-red-900">{{ coin.owner }}</span></p>
         </div>
       </li>
     </ul>
 
-    <!-- Create Coin Form -->
     <div class="w-full">
       <h1 class="my-8">Viens créer ta crypto !!!</h1>
       <form @submit.prevent="publishCoin" class="flex flex-col gap-4">
-        <label for="nom" class="block">Nom (4-12) :</label>
+        <label for="name" class="block">Nom (4-12) :</label>
         <input
-          v-model="form.nom"
-          id="nom"
+          v-model="form.name"
+          id="name"
           class="input w-full"
           placeholder="Entrez le nom de la crypto"
           required
@@ -143,7 +147,6 @@ function publishCoin() {
         <label for="logoUrl" class="block">LogoUrl (0-200) :</label>
         <input v-model="form.logoUrl" id="logoUrl" class="input w-full" placeholder="Entrez l'URL du logo" required />
 
-        <!-- Display errors -->
         <div v-for="[key, error] in Object.entries(errors)" :key="key">
           <p v-if="error" class="text-red-500">{{ error }}</p>
         </div>

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import ExerciceView from '../views/ExerciceView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,11 @@ const router = createRouter({
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
     },
+    {
+      path: '/exercices',
+      name: 'Exos',
+      component: ExerciceView,
+    }
   ],
 })
 

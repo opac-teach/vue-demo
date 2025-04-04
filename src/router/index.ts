@@ -28,9 +28,9 @@ const router = createRouter({
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),    },
     {
-      path: '/tests',
-      name: 'Tests',
-      component: () => import('@/views/TestsView.vue'),
+      path: '/create',
+      name: 'Create',
+      component: () => import('@/views/CreateView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',

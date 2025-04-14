@@ -2,7 +2,7 @@
 import { reactive, ref , watch } from 'vue'
 
 interface createCoin {
-    nom: string
+    name: string
     symbol: string
     description: string
     logoUrl: string
@@ -11,34 +11,60 @@ interface createCoin {
 type Errors = Record<string, string | null >
 
 const form = reactive<createCoin>({
-    nom: '',
+    name: '',
     symbol: '',
     description: '',
     logoUrl: ''
 })
 
 const errors = reactive<Errors>({
-    nom: null,
+    name: null,
     symbol: null,
     description: null,
     logoUrl: null
 })
 
-function publishCoin() {
-    if (Object.values(errors).some(error => error !== null)) {
-        console.log('Formulaire invalide')
-        return
+const successMessage = ref<string | null>(null)
+
+
+async function publishCoin() {
+  // Vérifie s'il y a des erreurs
+  if (Object.values(errors).some(error => error !== null)) {
+    console.log('Formulaire invalide')
+    return
+  }
+
+  try {
+    const body = JSON.stringify(form)
+    console.log('Formulaire soumis:', body)
+    const response = await fetch('https://nuxt-demo-blush.vercel.app/api/create-memecoin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body
+    })
+
+    if (!response.ok) {
+      throw new Error('Échec de la requête')
     }
-    console.log('Formulaire valide', form)
+
+    console.log('Formulaire valide, coin soumis:', form)
+    form.name = ''
+    form.symbol = ''
+    form.description = ''
+    form.logoUrl = ''
+
+  } catch (error) {
+    console.error('Erreur lors de la soumission du formulaire:', error)
+  }
 }
 
 watch(form, (newForm) => {
     form.symbol = newForm.symbol.toUpperCase();
-    if (newForm.nom.length < 4 || newForm.nom.length > 12) {
-        errors.nom = 'Le nom doit faire entre 4 et 12 caractères'
+    if (newForm.name.length < 4 || newForm.name.length > 12) {
+        errors.name = 'Le name doit faire entre 4 et 12 caractères'
     }else {
-        errors.nom = null
-        form.nom = newForm.nom.charAt(0).toUpperCase() + newForm.nom.slice(1);
+        errors.name = null
+        form.name = newForm.name.charAt(0).toUpperCase() + newForm.name.slice(1);
     }
     if (newForm.symbol.length > 4) {
         errors.symbol = 'Le symbole doit faire entre 2 et 4 caractères'
@@ -57,14 +83,14 @@ watch(form, (newForm) => {
 
 <template>
     <div class="w-full">
-        <h1 class="my-8">Viens créer ta crypto !!!</h1>
+        <h1 class="text-4xl font-bold text-center text-primary mb-6">Viens créer ta crypto !</h1>
         <form @submit.prevent="publishCoin" class="flex flex-col gap-4">
-                <label for="nom" class="block">Nom (4-12) :</label>
+                <label for="name" class="block">Nom de la crypto (4-12) :</label>
                 <input 
-                    v-model="form.nom" 
-                    id="nom"
+                    v-model="form.name" 
+                    id="name"
                     class="input w-full"   
-                    placeholder="Entrez le nom de la crypto"
+                    placeholder="Entrez le name de la crypto"
                     required
                 />
             
@@ -91,6 +117,7 @@ watch(form, (newForm) => {
             
                 <div v-for="[key, error] in Object.entries(errors)" :key="key">
                     <p v-if="error" class="text-red-500">{{ error }}</p>
+                    <p v-if="successMessage" class="text-green-500 mt-4 text-center">{{ successMessage }}</p>
                 </div>
                 <button  type="submit" class="btn btn-primary">
                 Soumettre

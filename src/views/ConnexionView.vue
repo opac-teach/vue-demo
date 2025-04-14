@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref , watch } from 'vue'
+import { useTokenStore } from '@/stores/user'
 
+const tokenStore = useTokenStore()
 
 const etatconnexion = ref(false)
 
@@ -49,6 +51,15 @@ async function loginTest() {
     errorMessage.value = null // ← reset en cas de succès
     console.log('Vous êtes connecté ', form)
     form.password = ''
+
+    response.json().then(data => {
+      console.log('Réponse de l\'API:', data)
+      const { token, userId } = data
+
+      // Stocker dans le store Pinia
+      tokenStore.setCredentials(token, userId)
+    })
+
 
     setTimeout(() => {
       successMessage.value = null

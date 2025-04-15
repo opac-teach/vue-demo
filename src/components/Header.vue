@@ -25,6 +25,7 @@
     </div>
     <Nav />
     <div class="navbar-end">
+      <UserLogin />
       <DarkModeSwitch />
     </div>
   </header>
@@ -34,4 +35,5 @@
 import Nav from '@/components/Nav.vue'
 import NavMobile from '@/components/NavMobile.vue'
 import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+import UserLogin from '@/components/UserLogin.vue'
 </script>

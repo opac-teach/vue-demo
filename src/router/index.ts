@@ -17,6 +17,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('@/views/FundamentalsView.vue'),
     },
+
     {
       path: '/routing',
       name: 'Routing',
@@ -38,6 +39,16 @@ const router = createRouter({
       name: '404',
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
+    },
+    {
+      path: '/exercices',
+      name: 'Exercices',
+      component: () => import('@/views/Exercices.vue'),
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/Login.vue'),
     },
   ],
 })

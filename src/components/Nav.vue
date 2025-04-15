@@ -6,12 +6,23 @@
           {{ route.name }}
         </RouterLink>
       </li>
+      <li v-if="authStore.isAuthenticated">
+        <button @click="logout">Se déconnecter</button>
+      </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authentification'
+
 const router = useRouter()
+const authStore = useAuthStore()
 const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+
+const logout = () => {
+  authStore.logout()
+  router.push('/authentification')
+}
 </script>

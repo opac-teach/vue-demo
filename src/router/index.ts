@@ -39,6 +39,21 @@ const router = createRouter({
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
     },
+    {
+      path: '/ListeCoin',
+      name: 'ListeCoin',
+      component: () => import('@/views/ListeCoinView.vue'),
+    },
+    {
+      path: '/CreateCoin',
+      name: 'CreateCoin',
+      component: () => import('@/views/CreateCoinView.vue'),
+    },
+    {
+      path: '/Login',
+      name: 'Login',
+      component: () => import('@/views/LoginView.vue'),
+    }
   ],
 })
 

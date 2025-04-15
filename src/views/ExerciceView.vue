@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted, toRaw } from 'vue'
 
+const isResetting = ref(false)
+
 interface CreateCoin {
   name: string
   symbol: string
@@ -27,6 +29,8 @@ let errors = reactive<Errors>({
 const borderColor = ref('')
 
 watch(form, (newForm) => {
+  if (isResetting.value) return;
+
   form.symbol = newForm.symbol.toUpperCase()
   if (newForm.name.length < 4 || newForm.name.length > 12) {
     errors.name = 'Le nom doit faire entre 4 et 12 caractères'
@@ -91,10 +95,21 @@ function publishCoin() {
   .catch((error) => {
     console.error("Erreur lors de l'envoi du formulaire:", error);
   });
+  isResetting.value = true
   form.name = "";
   form.symbol = "";
   form.description = "";
   form.logoUrl = "";
+
+  getData();
+  
+  errors.name= null;
+  errors.symbol= null;
+  errors.description= null;
+  errors.logoUrl= null;
+  setTimeout(() => {
+    isResetting.value = false;
+  },0)
 }
 </script>
 

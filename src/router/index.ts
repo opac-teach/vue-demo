@@ -39,6 +39,21 @@ const router = createRouter({
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
     },
+    {
+      path: '/exercices',
+      name: 'Exercices',
+      component: () => import('@/views/Exercices.vue'),
+    },
+    {
+      path: '/formMemeCoin',
+      name: 'formMemeCoin',
+      component: () => import('@/views/formMemeCoin.vue'),
+    },
+    {
+      path: '/authentification',
+      name: 'authentification',
+      component: () => import('@/views/authentification.vue'),
+    },
   ],
 })
 

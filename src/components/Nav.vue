@@ -2,7 +2,7 @@
   <div class="navbar-center hidden md:flex">
     <ul class="menu menu-horizontal px-1">
       <li v-for="route in routes" :key="route.path">
-        <RouterLink :to="route.path" active-class="bg-neutral text-neutral-content">
+        <RouterLink :to="route.path" class-active="bg-neutral text-neutral-content">
           {{ route.name }}
         </RouterLink>
       </li>

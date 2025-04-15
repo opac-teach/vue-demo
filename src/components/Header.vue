@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/Nav.vue'
+import Nav from '@/components/NavDesktop.vue'
 import NavMobile from '@/components/NavMobile.vue'
 import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
 </script>

@@ -1,0 +1,2272 @@
+[32m📄 .editorconfig[39m
+    Contenu :
+    [*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl}]
+    charset = utf-8
+    indent_size = 2
+    indent_style = space
+    insert_final_newline = true
+    trim_trailing_whitespace = true
+    
+    end_of_line = lf
+    max_line_length = 100
+    
+[32m📄 .gitattributes[39m
+    Contenu :
+    * text=auto eol=lf
+    
+[32m📁 .github[39m
+[32m    📁 workflows[39m
+[32m        📄 tests.yml[39m
+            Contenu :
+            name: Tests
+            
+            on:
+              push:
+                branches: [main]
+              pull_request:
+                branches: [main]
+            
+            jobs:
+              test:
+                runs-on: ubuntu-latest
+            
+                steps:
+                  - uses: actions/checkout@v4
+            
+                  - name: Set up Node.js
+                    uses: actions/setup-node@v4
+                    with:
+                      node-version: lts/*
+                      cache: 'npm'
+            
+                  - name: Install dependencies
+                    run: npm ci
+            
+                  - name: Install Playwright Browsers
+                    run: npx playwright install --with-deps
+            
+                  - name: Run tests
+                    run: npm test
+            
+                  - uses: actions/upload-artifact@v4
+                    if: ${{ !cancelled() }}
+                    with:
+                      name: playwright-report
+                      path: playwright-report/
+                      retention-days: 30
+            
+[32m📄 .gitignore[39m
+    Contenu :
+    # Logs
+    logs
+    *.log
+    npm-debug.log*
+    yarn-debug.log*
+    yarn-error.log*
+    pnpm-debug.log*
+    lerna-debug.log*
+    
+    node_modules
+    .DS_Store
+    dist
+    dist-ssr
+    coverage
+    *.local
+    
+    /cypress/videos/
+    /cypress/screenshots/
+    
+    # Editor directories and files
+    .vscode/*
+    !.vscode/extensions.json
+    .idea
+    *.suo
+    *.ntvs*
+    *.njsproj
+    *.sln
+    *.sw?
+    
+    *.tsbuildinfo
+    
+    test-results/
+    playwright-report/
+    .vercel
+    
+[32m📄 .prettierrc.json[39m
+    Contenu :
+    {
+      "$schema": "https://json.schemastore.org/prettierrc",
+      "semi": false,
+      "singleQuote": true,
+      "printWidth": 100
+    }
+    
+[32m📁 .vscode[39m
+[32m    📄 extensions.json[39m
+        Contenu :
+        {
+          "recommendations": [
+            "Vue.volar",
+            "vitest.explorer",
+            "ms-playwright.playwright",
+            "dbaeumer.vscode-eslint",
+            "EditorConfig.EditorConfig",
+            "esbenp.prettier-vscode"
+          ]
+        }
+        
+[32m📁 e2e[39m
+[32m    📄 app.spec.ts[39m
+        Contenu :
+        import { test, expect } from '@playwright/test'
+        
+        // See here how to get started:
+        // https://playwright.dev/docs/intro
+        
+        test.describe('Layout & Routing', () => {
+          test('visits the app root url', async ({ page }) => {
+            await page.goto('/')
+            await expect(page.locator('header h1')).toHaveText('Vue Demo')
+            await expect(page.locator('main h2')).toHaveText('Links to documentation')
+        
+            await expect(page.locator('.navbar-center a').first()).toHaveText('Home')
+            await expect(page.locator('.navbar-center a').first()).toHaveClass(/(^|\s)bg-neutral(\s|$)/)
+            await expect(page.locator('.navbar-center a').nth(1)).toHaveText('Fundamentals')
+            await expect(page.locator('.navbar-center a').nth(1)).not.toHaveClass(/(^|\s)bg-neutral(\s|$)/)
+        
+            await expect(page.locator('header')).toHaveCount(1)
+            await expect(page.locator('main')).toHaveCount(1)
+            await expect(page.locator('footer')).toHaveCount(1)
+          })
+        
+          test('visits the fundamentals url', async ({ page }) => {
+            await page.goto('/fundamentals')
+            await expect(page.locator('main h2').first()).toHaveText('Template Syntax')
+        
+            await expect(page.locator('.navbar-center a').nth(0)).not.toHaveClass(/(^|\s)bg-neutral(\s|$)/)
+            await expect(page.locator('.navbar-center a').nth(1)).toHaveClass(/(^|\s)bg-neutral(\s|$)/)
+          })
+        })
+        
+        test.describe('State page', () => {
+          test('use the count composable', async ({ page }) => {
+            await page.goto('/state')
+            await expect(page.locator('h2').first()).toHaveText('Reactivity')
+        
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(0)).toHaveText('0')
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(1)).toHaveText('0')
+            await page.locator('[data-testid="count-composable-increment"]').nth(0).click()
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(0)).toHaveText('1')
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(1)).toHaveText('0')
+            await page.locator('[data-testid="count-composable-increment"]').nth(1).click()
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(0)).toHaveText('1')
+            await expect(page.locator('[data-testid="count-composable-count"]').nth(1)).toHaveText('1')
+          })
+        
+          test('use the count store', async ({ page }) => {
+            await page.goto('/state')
+        
+            await expect(page.locator('[data-testid="count-store-count"]').nth(0)).toHaveText('0')
+            await expect(page.locator('[data-testid="count-store-count"]').nth(1)).toHaveText('0')
+            await page.locator('[data-testid="count-store-increment"]').nth(0).click()
+            await expect(page.locator('[data-testid="count-store-count"]').nth(0)).toHaveText('1')
+            await expect(page.locator('[data-testid="count-store-count"]').nth(1)).toHaveText('1')
+            await page.locator('[data-testid="count-store-increment"]').nth(1).click()
+            await expect(page.locator('[data-testid="count-store-count"]').nth(0)).toHaveText('2')
+            await expect(page.locator('[data-testid="count-store-count"]').nth(1)).toHaveText('2')
+          })
+        })
+        
+[32m    📄 tsconfig.json[39m
+        Contenu :
+        {
+          "extends": "@tsconfig/node22/tsconfig.json",
+          "include": ["./**/*"]
+        }
+        
+[32m📄 env.d.ts[39m
+    Contenu :
+    /// <reference types="vite/client" />
+    
+[32m📄 eslint.config.ts[39m
+    Contenu :
+    import pluginVue from 'eslint-plugin-vue'
+    import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+    import pluginVitest from '@vitest/eslint-plugin'
+    import pluginPlaywright from 'eslint-plugin-playwright'
+    import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+    
+    // To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
+    // import { configureVueProject } from '@vue/eslint-config-typescript'
+    // configureVueProject({ scriptLangs: ['ts', 'tsx'] })
+    // More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+    
+    export default defineConfigWithVueTs(
+      {
+        name: 'app/files-to-lint',
+        files: ['**/*.{ts,mts,tsx,vue}'],
+      },
+    
+      {
+        name: 'app/files-to-ignore',
+        ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
+      },
+    
+      pluginVue.configs['flat/essential'],
+      vueTsConfigs.recommended,
+      
+      {
+        ...pluginVitest.configs.recommended,
+        files: ['src/**/__tests__/*'],
+      },
+      
+      {
+        ...pluginPlaywright.configs['flat/recommended'],
+        files: ['e2e/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+      },
+      skipFormatting,
+    )
+    
+[32m📄 index.html[39m
+    Contenu :
+    <!doctype html>
+    <html lang="">
+      <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VueJS Demo</title>
+      </head>
+      <body>
+        <div id="app"></div>
+        <script type="module" src="/src/main.ts"></script>
+      </body>
+    </html>
+    
+[32m📄 playwright.config.ts[39m
+    Contenu :
+    import process from 'node:process'
+    import { defineConfig, devices } from '@playwright/test'
+    
+    /**
+     * Read environment variables from file.
+     * https://github.com/motdotla/dotenv
+     */
+    // require('dotenv').config();
+    
+    /**
+     * See https://playwright.dev/docs/test-configuration.
+     */
+    export default defineConfig({
+      testDir: './e2e',
+      /* Maximum time one test can run for. */
+      timeout: 5 * 1000,
+      expect: {
+        /**
+         * Maximum time expect() should wait for the condition to be met.
+         * For example in `await expect(locator).toHaveText();`
+         */
+        timeout: 1500,
+      },
+      /* Fail the build on CI if you accidentally left test.only in the source code. */
+      forbidOnly: !!process.env.CI,
+      /* Retry on CI only */
+      retries: process.env.CI ? 2 : 0,
+      /* Opt out of parallel tests on CI. */
+      workers: process.env.CI ? 1 : undefined,
+      /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+      reporter: 'html',
+      /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+      use: {
+        /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
+        actionTimeout: 0,
+        /* Base URL to use in actions like `await page.goto('/')`. */
+        baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:3101',
+    
+        /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+        trace: 'on-first-retry',
+    
+        /* Only on CI systems run the tests headless */
+        headless: !!process.env.CI,
+      },
+    
+      /* Configure projects for major browsers */
+      projects: [
+        {
+          name: 'chromium',
+          use: {
+            ...devices['Desktop Chrome'],
+          },
+        },
+        // {
+        //   name: 'firefox',
+        //   use: {
+        //     ...devices['Desktop Firefox'],
+        //   },
+        // },
+        // {
+        //   name: 'webkit',
+        //   use: {
+        //     ...devices['Desktop Safari'],
+        //   },
+        // },
+    
+        /* Test against mobile viewports. */
+        // {
+        //   name: 'Mobile Chrome',
+        //   use: {
+        //     ...devices['Pixel 5'],
+        //   },
+        // },
+        // {
+        //   name: 'Mobile Safari',
+        //   use: {
+        //     ...devices['iPhone 12'],
+        //   },
+        // },
+    
+        /* Test against branded browsers. */
+        // {
+        //   name: 'Microsoft Edge',
+        //   use: {
+        //     channel: 'msedge',
+        //   },
+        // },
+        // {
+        //   name: 'Google Chrome',
+        //   use: {
+        //     channel: 'chrome',
+        //   },
+        // },
+      ],
+    
+      /* Folder for test artifacts such as screenshots, videos, traces, etc. */
+      // outputDir: 'test-results/',
+    
+      /* Run your local dev server before starting the tests */
+      webServer: {
+        /**
+         * Use the dev server by default for faster feedback loop.
+         * Use the preview server on CI for more realistic testing.
+         * Playwright will re-use the local server if there is already a dev-server running.
+         */
+        command: process.env.CI ? 'npm run build && npm run preview' : 'npm run dev',
+        port: process.env.CI ? 4173 : 3101,
+        reuseExistingServer: !process.env.CI,
+      },
+    })
+    
+[32m📁 public[39m
+[32m    📄 favicon.ico[39m
+        Contenu :
+                   �     (       @                                                                                                                                                                                                                     ��A ��A ��A ��A                                                                                                             ��A ��A ��A3��A3��A ��A                                                                                                         ��A ��A��A���A���A��A                                                                                                     ��A ��A ��AZ��A���A���AZ��A ��A                                                                                                 ��A ��A��AɃ�A���A���AɃ�A��A                                                                                             ��A ��A ��Az��A���A���A���A���Az��A ��A                                                                                     ��A ��A ��A.��A߃�A���A���A���A���A߃�A.��A ��A                                                                                 ��A ��A��A���A���A���A���A���A���A���A���A��A                                                                             ��A ��A ��AH��A���A���A���A���A���A���A���A���AH��A ��A                                                                         ��A ��A��A���A���A���A���A���A���A���A���A���A���A��A                                                                     ��A ��A ��Af��A���A���A���A���A���A���A���A���A���A���Af��A ��A                                                                 ��A ��A ��A҃�A���A���A���A���A���A���A���A���A���A���A҃�A ��A                                                             ��A ��A��A���A���A���A���A���A�|�?�|�?���A���A���A���A���A���A���A��A                                                     ��A ��A ��A7��A惸A���A���A���A���A�jl9�jl9���A���A���A���A���A���A惸A7��A ��A                                                 ��A ��A	��A���A���A���A���A���A�w�=�_L5�_L5�w�=���A���A���A���A���A���A���A	��A                                             ��A ��A ��AR��A�A���A���A���A���@�fa8�^H5�^H5�fa8���@���A���A���A���A���A�AR��A ��A                                         ��A ��A��A�A���A���A���A���A�r�<�^I5�^I5�^I5�^I5�r�<���A���A���A���A���A���A�A��A                                     ��A ��A ��Aq��A���A���A���A���A�}�?�cW7�^H5�^I5�^I5�^H5�cW7�}�?���A���A���A���A���A���Aq��A ��A                                 ��A ��A(��Aڃ�A���A���A���A���A�mv:�^H5�^I5�^I5�^I5�^I5�^H5�mv:���A���A���A���A���A���Aڃ�A(��A                             ��A ��A��A���A���A���A���A���A�y�>�`P6�^H5�^I5�^I5�^I5�^I5�^H5�`P6�y�>���A���A���A���A���A���A���A��A                     ��A ��A ��A@��A샸A���A���A���A���@�ii9�]G5�^I5�^I5�^I5�^I5�^I5�^I5�]G5�ii9���@���A���A���A���A���A샸A@��A ��A                 ��A ��A��A���A���A���A���A���A�u�=�_K5�^I5�^I5�^I5�^I5�^I5�^I5�^I5�^I5�_K5�u�=���A���A���A���A���A���A���A��A             ��A ��A ��A]��A���A���A���A���A��@�e]7�^H5�^I5�^I5�^I5�^J5�^J5�^I5�^I5�^I5�^H5�e]7��@���A���A���A���A���A���A]��A ��A         ��A ��A��Ã�A���A���A���A���A�p;�^I5�^I5�^I5�^I5�^I5�_L5n_L5n^I5�^I5�^I5�^I5�^I5�p;���A���A���A���A���A���Ã�A��A     ��A ��A ��A}��A���A���A���A���A�|�?�bT6�^H5�^I5�^I5�^I5�_J5�aP6aP6_J5�^I5�^I5�^I5�^H5�bT6�|�?���A���A���A���A���A���A}��A ��A ��A ��A/��AჸA���A���A���A���A�lq9�^H5�^I5�^I5�^I5�^I5�_L5P^H5 ^H5 _L5P^I5�^I5�^I5�^I5�^H5�lq9���A���A���A���A���A���AჸA/��A ��A��A���A���A���A���A���A�x�=�`N6�^I5�^I5�^I5�^I5�_K5�bT7aQ6 aQ6 bT7_K5�^I5�^I5�^I5�^I5�`N6�x�=���A���A���A���A���A���A���A��AW��A���A���A���A���A���@�gd8�^H5�^I5�^I5�^I5�^J5�`M65_K5 jf9 jf9 _K5 `M65^J5�^I5�^I5�^I5�^H5�gd8���@���A���A���A���A���A���AW��A���Aȃ�Aƃ�Aƃ�AƄ�A�v�=�_K5�^I5�^I5�^I5�^I5�_K5uha9bS7         bS7 ha9_K5u^I5�^I5�^I5�^I5�_K5�v�=Ƅ�Aƃ�Aƃ�Aƃ�Aƃ�Aȃ�A���A��A��A��A��A��Alr:\D4^I5^I5^I5^I5`M6^H5                 ^H5 `M6^I5^I5^I5^I5\D4lr9��A��A��A��A��A��A                                                                                                                                �������������?���?��������������������������  ��  ��  �  �  ?�  ?�  �  �  �  �  �  �  �� �  �  �  � ����
+[32m📁 src[39m
+[32m    📄 App.vue[39m
+        Contenu :
+        <script setup lang="ts">
+        import DefaultLayout from './layouts/DefaultLayout.vue'
+        import { onMounted } from 'vue'
+        onMounted(() => {
+          console.log('App mounted')
+        })
+        </script>
+        
+        <template>
+          <DefaultLayout />
+        </template>
+        
+[32m    📁 assets[39m
+[32m        📄 highlight.css[39m
+            Contenu :
+            /*!
+              Theme: StackOverflow Dark
+              Description: Dark theme as used on stackoverflow.com
+              Author: stackoverflow.com
+              Maintainer: @Hirse
+              Website: https://github.com/StackExchange/Stacks
+              License: MIT
+              Updated: 2021-05-15
+            
+              Updated for @stackoverflow/stacks v0.64.0
+              Code Blocks: /blob/v0.64.0/lib/css/components/_stacks-code-blocks.less
+              Colors: /blob/v0.64.0/lib/css/exports/_stacks-constants-colors.less
+            */
+            
+            :root {
+              --hljs-text: #2f3337;
+              --hljs-background: #f6f6f6;
+              --hljs-comment: #656e77;
+              --hljs-keyword: #015692;
+              --hljs-attribute: #015692;
+              --hljs-symbol: #803378;
+              --hljs-namespace: #b75501;
+              --hljs-variable: #54790d;
+              --hljs-literal: #b75501;
+              --hljs-punctuation: #535a60;
+              --hljs-deletion: #c02d2e;
+              --hljs-addition: #2f6f44;
+            }
+            
+            html.dark {
+              --hljs-text: #ffffff;
+              --hljs-background: #1c1b1b;
+              --hljs-comment: #999999;
+              --hljs-keyword: #88aece;
+              --hljs-attribute: #88aece;
+              --hljs-symbol: #c59bc1;
+              --hljs-namespace: #f08d49;
+              --hljs-variable: #b5bd68;
+              --hljs-literal: #f08d49;
+              --hljs-punctuation: #cccccc;
+              --hljs-deletion: #de7176;
+              --hljs-addition: #76c490;
+            }
+            
+            .hljs {
+              color: var(--hljs-text);
+              background: var(--hljs-background);
+            }
+            
+            .hljs-subst {
+              color: var(--hljs-text);
+            }
+            
+            .hljs-comment {
+              color: var(--hljs-comment);
+            }
+            
+            .hljs-keyword,
+            .hljs-selector-tag,
+            .hljs-meta .hljs-keyword,
+            .hljs-doctag,
+            .hljs-section {
+              color: var(--hljs-keyword);
+            }
+            
+            .hljs-attr {
+              color: var(--hljs-keyword);
+            }
+            
+            .hljs-attribute {
+              color: var(--hljs-symbol);
+            }
+            
+            .hljs-name,
+            .hljs-type,
+            .hljs-number,
+            .hljs-selector-id,
+            .hljs-quote,
+            .hljs-template-tag {
+              color: var(--hljs-namespace);
+            }
+            
+            .hljs-selector-class {
+              color: var(--hljs-keyword);
+            }
+            
+            .hljs-string,
+            .hljs-regexp,
+            .hljs-symbol,
+            .hljs-variable,
+            .hljs-template-variable,
+            .hljs-link,
+            .hljs-selector-attr {
+              color: var(--hljs-variable);
+            }
+            
+            .hljs-meta,
+            .hljs-selector-pseudo {
+              color: var(--hljs-keyword);
+            }
+            
+            .hljs-built_in,
+            .hljs-title,
+            .hljs-literal {
+              color: var(--hljs-literal);
+            }
+            
+            .hljs-bullet,
+            .hljs-code {
+              color: var(--hljs-punctuation);
+            }
+            
+            .hljs-meta .hljs-string {
+              color: var(--hljs-variable);
+            }
+            
+            .hljs-deletion {
+              color: var(--hljs-deletion);
+            }
+            
+            .hljs-addition {
+              color: var(--hljs-addition);
+            }
+            
+            .hljs-emphasis {
+              font-style: italic;
+            }
+            
+            .hljs-strong {
+              font-weight: bold;
+            }
+            
+            .hljs-formula,
+            .hljs-operator,
+            .hljs-params,
+            .hljs-property,
+            .hljs-punctuation,
+            .hljs-tag {
+              /* purposely ignored */
+            }
+            
+[32m        📄 logo.svg[39m
+            Contenu :
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+            
+[32m        📄 main.css[39m
+            Contenu :
+            @import 'tailwindcss';
+            @plugin "@tailwindcss/typography";
+            @plugin "daisyui" {
+              themes:
+                emerald --default,
+                synthwave --prefersdark;
+            }
+            
+            @import './highlight.css';
+            
+            /* @custom-variant dark (&:where(.dark, .dark *)); */
+            @custom-variant dark (&:where([data-theme=synthwave], [data-theme=synthwave] *));
+            
+            @layer base {
+              code {
+                @apply text-accent-content;
+              }
+            }
+            
+[32m    📁 components[39m
+[32m        📄 CodeSnippet.vue[39m
+            Contenu :
+            <template>
+              <div
+                class="w-full overflow-x-scroll max-h-screen overflow-y-scroll border border-gray-300 rounded-md shadow-sm"
+              >
+                <div v-if="name" class="text-md italic text-end pr-2 pt-1">{{ name }}</div>
+                <div v-html="highlightedCode" class="text-sm px-2"></div>
+              </div>
+            </template>
+            
+            <script setup lang="ts">
+            import { ref, onMounted, watch } from 'vue'
+            import { codeToHtml } from 'shiki'
+            import { useUIStore } from '@/stores/ui'
+            
+            const props = defineProps<{
+              source: string
+              name?: string
+              lang?: string
+            }>()
+            
+            const highlightedCode = ref('')
+            const uiStore = useUIStore()
+            
+            async function updateHighlight() {
+              highlightedCode.value = await codeToHtml(props.source, {
+                lang: props.lang || 'vue',
+                theme: uiStore.isDarkMode ? 'vitesse-dark' : 'vitesse-light',
+              })
+            }
+            
+            onMounted(updateHighlight)
+            
+            watch(() => uiStore.isDarkMode, updateHighlight)
+            </script>
+            
+[32m        📄 DarkModeSwitch.vue[39m
+            Contenu :
+            <template>
+              <label class="swap swap-rotate">
+                <!-- this hidden checkbox controls the state -->
+                <input
+                  type="checkbox"
+                  class="theme-controller"
+                  :checked="uiStore.isDarkMode"
+                  value="synthwave"
+                  @change="uiStore.toggleDarkMode"
+                />
+            
+                <!-- sun icon -->
+                <svg
+                  class="swap-on h-10 w-10 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+                  />
+                </svg>
+            
+                <!-- moon icon -->
+                <svg
+                  class="swap-off h-10 w-10 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
+                  />
+                </svg>
+              </label>
+            </template>
+            
+            <script setup lang="ts">
+            import { RouterLink, RouterView, useRouter } from 'vue-router'
+            import { useUIStore } from '@/stores/ui'
+            
+            const router = useRouter()
+            const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+            const uiStore = useUIStore()
+            </script>
+            
+[32m        📄 Example.vue[39m
+            Contenu :
+            <template>
+              <div class="border-b border-gray-200 last:border-b-0 pb-4 last:pb-0 flex flex-col">
+                <div class="flex flex-col prose max-w-none">
+                  <h2>{{ name }}</h2>
+                  <div v-if="description" class="mb-4" v-html="description" />
+                </div>
+                <div class="flex flex-row gap-4">
+                  <div v-if="components.length > 0" :class="sources.length > 0 ? 'w-1/2' : 'w-full'">
+                    <div
+                      class="border border-gray-300 rounded-md p-4"
+                      v-for="(component, index) in components"
+                      :key="index"
+                    >
+                      <component :is="component" />
+                    </div>
+                  </div>
+                  <div v-if="sources.length > 0" :class="components.length > 0 ? 'w-1/2' : 'w-full'">
+                    <div class="flex flex-col gap-4">
+                      <CodeSnippet
+                        v-for="(source, index) in sources"
+                        :key="source"
+                        :source="source"
+                        :name="sourcesNames && sourcesNames[index]"
+                        :lang="sourcesLangs && sourcesLangs[index]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+            
+            <script setup lang="ts">
+            import CodeSnippet from '@/components/CodeSnippet.vue'
+            import type { Component } from 'vue'
+            
+            export interface ExampleProps {
+              name: string
+              description?: string
+              components: Array<string | Component>
+              sources: Array<string>
+              sourcesNames?: Array<string>
+              sourcesLangs?: Array<string>
+            }
+            
+            defineProps<ExampleProps>()
+            </script>
+            
+[32m        📄 Examples.vue[39m
+            Contenu :
+            <template>
+              <div class="flex flex-col gap-4 container max-w-full w-full">
+                <Example v-for="(example, index) in examples" :key="index" v-bind="example" />
+              </div>
+            </template>
+            
+            <script setup lang="ts">
+            import Example, { type ExampleProps } from '@/components/Example.vue'
+            
+            defineProps<{
+              examples: Array<ExampleProps>
+            }>()
+            </script>
+            
+[32m        📄 Footer.vue[39m
+            Contenu :
+            <script setup lang="ts"></script>
+            
+            <template>
+              <footer class="flex align-center justify-center bg-base-300 py-4">
+                <a href="https://github.com/pacwoodson/vue-demo" target="_blank"
+                  >Code Source
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 inline"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line></svg
+                ></a>
+              </footer>
+            </template>
+            
+[32m        📁 fundamentals[39m
+[32m            📄 ClassesBinding.vue[39m
+                Contenu :
+                <template>
+                  <div class="flex flex-col gap-4">
+                    <div :class="isPair ? 'bg-red-200' : 'bg-blue-200'">
+                      <p>Is pair: {{ isPair }} Is big: {{ isBig }}</p>
+                    </div>
+                
+                    <div
+                      :class="{
+                        'bg-red-200': isPair,
+                        'bg-blue-200': !isPair,
+                        'text-2xl': isBig,
+                        'text-sm': !isBig,
+                      }"
+                    >
+                      <p>Is pair: {{ isPair }} Is big: {{ isBig }}</p>
+                    </div>
+                
+                    <div :class="[isPair ? 'bg-red-200' : 'bg-blue-200', isBig ? 'text-2xl' : 'text-sm']">
+                      <p>Is pair: {{ isPair }} Is big: {{ isBig }}</p>
+                    </div>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                defineProps<{
+                  isPair?: boolean
+                  isBig?: boolean
+                }>()
+                </script>
+                
+[32m            📄 LifeCycle.vue[39m
+                Contenu :
+                <template>
+                  <p>Loaded: {{ loaded }}</p>
+                </template>
+                
+                <script setup lang="ts">
+                import { onMounted, onBeforeMount, onBeforeUnmount, onUnmounted, ref } from 'vue'
+                
+                const loaded = ref(false)
+                
+                onMounted(() => {
+                  console.log('mounted')
+                  loaded.value = true
+                })
+                
+                onBeforeMount(() => {
+                  console.log('beforeMount')
+                })
+                
+                onBeforeUnmount(() => {
+                  console.log('beforeUnmount')
+                })
+                
+                onUnmounted(() => {
+                  console.log('unmounted')
+                })
+                </script>
+                
+[32m            📄 PassingProps.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <ClassesBinding :isPair="someVar" :isBig="false" />
+                    <ClassesBinding :isPair="false" :isBig="true" />
+                    <ClassesBinding :isPair="true" :isBig="true" />
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import ClassesBinding from './ClassesBinding.vue'
+                
+                const someVar = true
+                </script>
+                
+[32m            📄 Slot.vue[39m
+                Contenu :
+                <template>
+                  <button
+                    class="btn"
+                    :class="{
+                      'btn-success': success,
+                      'btn-error': error,
+                    }"
+                  >
+                    <slot />
+                  </button>
+                </template>
+                
+                <script setup lang="ts">
+                defineProps<{
+                  success?: boolean
+                  error?: boolean
+                }>()
+                </script>
+                
+[32m            📄 Slots.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <Slot :success="true">Valider</Slot>
+                    <Slot :error="true">Annuler</Slot>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import Slot from './Slot.vue'
+                </script>
+                
+[32m            📄 TemplateRefs.vue[39m
+                Contenu :
+                <template>
+                  <div class="flex-grow">
+                    <input class="input" ref="input" />
+                    <button class="btn" @click="focusInput">Reset & Focus Input</button>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { ref, type Ref } from 'vue'
+                const input = ref<null | Ref>(null)
+                
+                const focusInput = () => {
+                  input.value.value = 'reset'
+                  input.value.focus()
+                }
+                </script>
+                
+[32m            📄 TemplateSyntax.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <!-- interpolation -->
+                    <p>Message: {{ msg }}</p>
+                
+                    <!-- expressions -->
+                    <p>Number: {{ number }}</p>
+                    <p>Number * 2: {{ number * 2 }}</p>
+                    <p>Number * 3: {{ tripleNumber(number) }}</p>
+                
+                    <!-- conditional rendering -->
+                    <p v-if="number > 10">Number is greater than 10</p>
+                    <p v-else-if="number === 10">Number is 10</p>
+                    <p v-else>Number is less than 10</p>
+                
+                    <p v-if="number > 100">v-if</p>
+                    <p v-show="number > 100">v-show</p>
+                
+                    <!-- list rendering -->
+                    <ul>
+                      <li v-for="n in numbers" :key="n">{{ n }}</li>
+                    </ul>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                const msg = 'Hello World'
+                const number: number = 5
+                const numbers = [1, 2, 3, 4, 5]
+                
+                function tripleNumber(n: number) {
+                  return n * 3
+                }
+                </script>
+                
+[32m            📁 __tests__[39m
+[32m                📄 Slot.vue.test.ts[39m
+                    Contenu :
+                    import { describe, it, expect } from 'vitest'
+                    
+                    import { mount } from '@vue/test-utils'
+                    import Slot from '@/components/fundamentals/Slot.vue'
+                    
+                    describe('Slot', () => {
+                      it('renders button with green class', () => {
+                        const wrapper = mount(Slot, {
+                          props: {
+                            success: true,
+                            error: false,
+                          },
+                        })
+                        const button = wrapper.find('button')
+                        expect(button.exists()).toBe(true)
+                        expect(button.classes()).toContain('btn-success')
+                        expect(button.classes()).not.toContain('btn-error')
+                      })
+                      it('renders button with red class', () => {
+                        const wrapper = mount(Slot, {
+                          props: {
+                            success: false,
+                            error: true,
+                          },
+                        })
+                        const button = wrapper.find('button')
+                        expect(button.exists()).toBe(true)
+                        expect(button.classes()).not.toContain('btn-success')
+                        expect(button.classes()).toContain('btn-error')
+                      })
+                    })
+                    
+[32m        📄 Header.vue[39m
+            Contenu :
+            <template>
+              <header class="navbar bg-base-100 shadow-sm">
+                <div class="navbar-start">
+                  <div class="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-ghost md:hidden">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 6h16M4 12h8m-8 6h16"
+                        />
+                      </svg>
+                    </div>
+                    <NavMobile />
+                  </div>
+                  <img alt="Vue logo" class="w-8 mx-2" src="@/assets/logo.svg" width="125" height="125" />
+                  <h1 class="text-2xl">Vue Demo</h1>
+                </div>
+                <Nav />
+                <div class="navbar-end">
+                  <DarkModeSwitch />
+                </div>
+              </header>
+            </template>
+            
+            <script setup lang="ts">
+            import Nav from '@/components/Nav.vue'
+            import NavMobile from '@/components/NavMobile.vue'
+            import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+            </script>
+            
+[32m        📄 Nav.vue[39m
+            Contenu :
+            <template>
+              <div class="navbar-center hidden md:flex">
+                <ul class="menu menu-horizontal px-1">
+                  <li v-for="route in routes" :key="route.path">
+                    <RouterLink :to="route.path" active-class="bg-neutral text-neutral-content">
+                      {{ route.name }}
+                    </RouterLink>
+                  </li>
+                  <li v-if="authStore.isAuthenticated">
+                    <button @click="logout">Se déconnecter</button>
+                  </li>
+                </ul>
+              </div>
+            </template>
+            
+            <script setup lang="ts">
+            import { RouterLink, useRouter } from 'vue-router'
+            import { useAuthStore } from '@/stores/authentification'
+            
+            const router = useRouter()
+            const authStore = useAuthStore()
+            const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+            
+            const logout = () => {
+              authStore.logout()
+              router.push('/authentification')
+            }
+            </script>
+            
+[32m        📄 NavMobile.vue[39m
+            Contenu :
+            <template>
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+              >
+                <li
+                  class=""
+                  @click="(e: Event) => (e.target as HTMLElement)?.blur()"
+                  v-for="route in routes"
+                  :key="route.path"
+                >
+                  <RouterLink :to="route.path" active-class="bg-neutral text-neutral-content">
+                    {{ route.name }}
+                  </RouterLink>
+                </li>
+              </ul>
+            </template>
+            
+            <script setup lang="ts">
+            import { RouterLink, useRouter } from 'vue-router'
+            const router = useRouter()
+            const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+            </script>
+            
+[32m        📁 state[39m
+[32m            📄 Binding.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <p>Const msg: {{ constMsg }}</p>
+                    <input class="input" v-bind:type="constInputType" :value="constMsg" />
+                
+                    <p>Ref msg: {{ refMsg }} (length: {{ refMsgLength }})</p>
+                    <input class="input" @keyup.up="refMsg += 'up'" v-model="refMsg" />
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { ref, watch } from 'vue'
+                
+                const constMsg = 'Hello World'
+                const constInputType = 'text'
+                
+                const refMsg = ref('')
+                const refMsgLength = ref(0)
+                
+                watch(refMsg, (newVal, oldVal) => {
+                  console.log('text changed', newVal, oldVal)
+                  refMsgLength.value = newVal.length
+                })
+                </script>
+                
+[32m            📄 CountComposable.vue[39m
+                Contenu :
+                <template>
+                  <div class="">
+                    <p data-testid="count-composable-count">{{ count }}</p>
+                    <button class="btn" @click="increment" data-testid="count-composable-increment">
+                      Increment
+                    </button>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { useCount } from '@/composables/count'
+                
+                const { count, increment } = useCount()
+                </script>
+                
+[32m            📄 CountStore.vue[39m
+                Contenu :
+                <template>
+                  <div class="">
+                    <p>
+                      simple: <span data-testid="count-store-count">{{ countStore.count }}</span>
+                    </p>
+                    <p>double: {{ countStore.doubleCount }}</p>
+                    <button
+                      class="btn btn-primary"
+                      @click="countStore.increment"
+                      data-testid="count-store-increment"
+                    >
+                      Increment
+                    </button>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { useCounterStore } from '@/stores/counter'
+                
+                const countStore = useCounterStore()
+                </script>
+                
+[32m            📄 Ethereum.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <h3>Block Number</h3>
+                    <p>{{ blockNumber }}</p>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import useEth from '@/composables/eth'
+                import { onUnmounted } from 'vue'
+                
+                const { blockNumber, clear } = useEth()
+                
+                onUnmounted(() => {
+                  clear()
+                })
+                </script>
+                
+[32m            📄 Reactivity.vue[39m
+                Contenu :
+                <template>
+                  <div>
+                    <h3 class="mt-2">Bad</h3>
+                    <p>Bad count: {{ badCount }}</p>
+                    <button class="btn" @click="badIncrement">Bad increment</button>
+                
+                    <h3>Ref</h3>
+                    <p>Ref count: {{ count }}</p>
+                    <button class="btn" @click="increment">Good increment</button>
+                    <button class="btn" @click="count++">Good inline increment</button>
+                    <button class="btn" @click="decrement">Good decrement</button>
+                    <p>Computed is pair: {{ isPair }}</p>
+                    <p>Not computed is pair: {{ badIsPair }}</p>
+                
+                    <h3>Reactive</h3>
+                    <p>Reactive count: {{ reactiveObject.count }}</p>
+                    <button class="btn" @click="incrementReactive(3)">Reactive increment</button>
+                    <p v-show="reactiveIsPair">Reactive is pair ! <span v-if="reactiveIsPair">Yes</span></p>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { ref, reactive, computed, watch } from 'vue'
+                
+                let badCount = 0
+                const count = ref(0)
+                
+                const reactiveObject = reactive({
+                  count: 0,
+                })
+                
+                function badIncrement() {
+                  badCount++
+                }
+                function increment() {
+                  count.value++
+                }
+                function decrement() {
+                  count.value--
+                }
+                function incrementReactive(n: number) {
+                  reactiveObject.count += n
+                }
+                
+                const badIsPair = count.value % 2 === 0
+                const isPair = computed(() => count.value % 2 === 0)
+                const reactiveIsPair = computed(() => reactiveObject.count % 2 === 0)
+                </script>
+                
+[32m            📄 UsernameStore.vue[39m
+                Contenu :
+                <template>
+                  <div class="">
+                    <span>username: {{ usernameStore.username }}</span>
+                    <input class="input" v-model="username" />
+                    <button class="btn" @click="usernameStore.setUsername(username)">Set username</button>
+                  </div>
+                </template>
+                
+                <script setup lang="ts">
+                import { useUsernameStore } from '@/stores/username'
+                import { ref } from 'vue'
+                
+                const usernameStore = useUsernameStore()
+                const username = ref('')
+                </script>
+                
+[32m        📁 __tests__[39m
+[32m            📄 CodeSnippet.vue.test.ts[39m
+                Contenu :
+                import { describe, it, expect, beforeEach } from 'vitest'
+                
+                import { mount } from '@vue/test-utils'
+                import CodeSnippet from '@/components/CodeSnippet.vue'
+                import { setActivePinia, createPinia } from 'pinia'
+                
+                describe('CodeSnippet', () => {
+                  beforeEach(() => {
+                    setActivePinia(createPinia())
+                  })
+                
+                  it('renders name div when name prop is provided', () => {
+                    const wrapper = mount(CodeSnippet, {
+                      props: {
+                        source: 'console.log("test")',
+                        name: 'Test Name',
+                      },
+                    })
+                    const nameDiv = wrapper.find('div.text-md.italic.text-end')
+                    expect(nameDiv.exists()).toBe(true)
+                    expect(nameDiv.text()).toBe('Test Name')
+                  })
+                
+                  it('does not render name div when name prop is not provided', () => {
+                    const wrapper = mount(CodeSnippet, {
+                      props: {
+                        source: 'console.log("test")',
+                      },
+                    })
+                    const nameDiv = wrapper.find('div.text-md.italic.text-end')
+                    expect(nameDiv.exists()).toBe(false)
+                  })
+                })
+                
+[32m            📄 setup.ts[39m
+                Contenu :
+                import { beforeAll, vi } from 'vitest'
+                
+                beforeAll(() => {
+                  Object.defineProperty(window, 'matchMedia', {
+                    writable: true,
+                    value: vi.fn().mockImplementation((query: string) => ({
+                      matches: false,
+                      media: query,
+                      onchange: null,
+                      addListener: vi.fn(), // deprecated
+                      removeListener: vi.fn(), // deprecated
+                      addEventListener: vi.fn(),
+                      removeEventListener: vi.fn(),
+                      dispatchEvent: vi.fn(),
+                    })),
+                  })
+                })
+                
+[32m    📁 composables[39m
+[32m        📄 count.ts[39m
+            Contenu :
+            import { ref } from 'vue'
+            
+            export const useCount = () => {
+              const count = ref(0)
+            
+              const increment = () => {
+                count.value++
+              }
+            
+              return {
+                count,
+                increment,
+              }
+            }
+            
+[32m        📄 eth.ts[39m
+            Contenu :
+            import { ref } from 'vue'
+            
+            const useEth = () => {
+              const blockNumber = ref<null | number>(null)
+            
+              async function getCurrentBlockNumber() {
+                const rpcUrl = 'https://eth.llamarpc.com'
+            
+                const response = await fetch(rpcUrl, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'eth_blockNumber',
+                    params: [],
+                    id: 1,
+                  }),
+                })
+            
+                const data = await response.json()
+            
+                if (data.error) {
+                  throw new Error(`Error: ${data.error.message}`)
+                }
+            
+                // Convert hex string to decimal
+                blockNumber.value = parseInt(data.result, 16)
+              }
+            
+              const interval = setInterval(getCurrentBlockNumber, 10000)
+            
+              getCurrentBlockNumber()
+              return {
+                blockNumber,
+                clear: () => clearInterval(interval),
+              }
+            }
+            
+            export default useEth
+            
+[32m        📁 __test__[39m
+[32m            📄 count.test.ts[39m
+                Contenu :
+                import { test, expect } from 'vitest'
+                
+                import { useCount } from '../count.js'
+                
+                test('useCount', () => {
+                  const { count, increment } = useCount()
+                  expect(count.value).toBe(0)
+                
+                  increment()
+                  expect(count.value).toBe(1)
+                })
+                
+[32m    📁 layouts[39m
+[32m        📄 DefaultLayout.vue[39m
+            Contenu :
+            <script setup lang="ts">
+            import { RouterView } from 'vue-router'
+            import Header from '@/components/Header.vue'
+            import Footer from '@/components/Footer.vue'
+            </script>
+            
+            <template>
+              <div class="min-h-screen flex flex-col">
+                <Header />
+            
+                <main class="flex flex-1 container mx-auto w-screen-lg max-w-screen-lg w-full p-8">
+                  <RouterView />
+                </main>
+            
+                <Footer />
+              </div>
+            </template>
+            
+[32m    📁 lib[39m
+[32m        📄 md.ts[39m
+            Contenu :
+            import { marked } from 'marked'
+            
+            export const parse = (m: string) => marked.parse(m) as string
+            
+[32m    📄 main.ts[39m
+        Contenu :
+        import './assets/main.css'
+        
+        import { createApp } from 'vue'
+        import { createPinia } from 'pinia'
+        
+        import App from './App.vue'
+        import router from './router'
+        
+        const app = createApp(App)
+        
+        app.use(createPinia())
+        app.use(router)
+        
+        app.mount('#app')
+        
+[32m    📁 router[39m
+[32m        📄 index.ts[39m
+            Contenu :
+            import { createRouter, createWebHistory } from 'vue-router'
+            import HomeView from '../views/HomeView.vue'
+            
+            const router = createRouter({
+              history: createWebHistory(import.meta.env.BASE_URL),
+              routes: [
+                {
+                  path: '/',
+                  name: 'Home',
+                  component: HomeView,
+                },
+                {
+                  path: '/fundamentals',
+                  name: 'Fundamentals',
+                  // route level code-splitting
+                  // this generates a separate chunk (About.[hash].js) for this route
+                  // which is lazy-loaded when the route is visited.
+                  component: () => import('@/views/FundamentalsView.vue'),
+                },
+                {
+                  path: '/routing',
+                  name: 'Routing',
+                  component: () => import('@/views/RoutingView.vue'),
+                  meta: { sayHello: true },
+                },
+                {
+                  path: '/state',
+                  name: 'State',
+                  component: () => import('@/views/StateView.vue'),
+                },
+                {
+                  path: '/tests',
+                  name: 'Tests',
+                  component: () => import('@/views/TestsView.vue'),
+                },
+                {
+                  path: '/:pathMatch(.*)*',
+                  name: '404',
+                  component: () => import('@/views/NotFoundView.vue'),
+                  meta: { hide: true },
+                },
+                {
+                  path: '/exercices',
+                  name: 'Exercices',
+                  component: () => import('@/views/Exercices.vue'),
+                },
+                {
+                  path: '/formMemeCoin',
+                  name: 'formMemeCoin',
+                  component: () => import('@/views/formMemeCoin.vue'),
+                },
+                {
+                  path: '/authentification',
+                  name: 'authentification',
+                  component: () => import('@/views/authentification.vue'),
+                },
+              ],
+            })
+            
+            // Navigation guard
+            router.beforeEach((to, from, next) => {
+              if (to.meta.sayHello) {
+                console.log('hello !')
+              }
+            
+              next()
+            })
+            
+            export default router
+            
+[32m    📁 stores[39m
+[32m        📄 authentification.ts[39m
+            Contenu :
+            import { ref } from 'vue'
+            import { defineStore } from 'pinia'
+            
+            export const useAuthStore = defineStore('auth', () => {
+              const token = ref('')
+              const userId = ref<number | null>(null)
+              const isAuthenticated = ref(false)
+            
+              function setAuth(tokenValue: string, id: number) {
+                token.value = tokenValue
+                userId.value = id
+                isAuthenticated.value = true
+                localStorage.setItem('auth_token', tokenValue)
+                localStorage.setItem('auth_user_id', id.toString())
+                console.log('Saved token')
+              }
+            
+              function loadAuthFromStorage() {
+                const savedToken = localStorage.getItem('auth_token')
+                const savedUserId = localStorage.getItem('auth_user_id')
+                if (savedToken && savedUserId) {
+                  token.value = savedToken
+                  userId.value = parseInt(savedUserId)
+                  isAuthenticated.value = true
+                }
+              }
+            
+              function logout() {
+                token.value = ''
+                userId.value = null
+                isAuthenticated.value = false
+                localStorage.removeItem('auth_token')
+                localStorage.removeItem('auth_user_id')
+              }
+            
+              loadAuthFromStorage()
+            
+              return { token, userId, isAuthenticated, setAuth, loadAuthFromStorage, logout }
+            })
+            
+[32m        📄 counter.test.ts[39m
+            Contenu :
+            import { describe, beforeEach, it, expect } from 'vitest'
+            import { setActivePinia, createPinia } from 'pinia'
+            import { useCounterStore } from './counter'
+            
+            describe('Counter Store', () => {
+              beforeEach(() => {
+                setActivePinia(createPinia())
+              })
+            
+              it('increments', () => {
+                const counter = useCounterStore()
+                expect(counter.count).toBe(0)
+                counter.increment()
+                expect(counter.count).toBe(1)
+              })
+            })
+            
+[32m        📄 counter.ts[39m
+            Contenu :
+            import { ref, computed } from 'vue'
+            import { defineStore } from 'pinia'
+            
+            export const useCounterStore = defineStore('counter', () => {
+              const count = ref(0)
+              const doubleCount = computed(() => count.value * 2)
+              function increment() {
+                count.value++
+              }
+            
+              return { count, doubleCount, increment }
+            })
+            
+[32m        📄 ui.ts[39m
+            Contenu :
+            import { defineStore } from 'pinia'
+            import { ref } from 'vue'
+            
+            export const useUIStore = defineStore('ui', () => {
+              const isDarkMode = ref(false)
+            
+              function toggleDarkMode() {
+                isDarkMode.value = !isDarkMode.value
+                document.documentElement.classList.toggle('dark')
+                localStorage.setItem('darkMode', isDarkMode.value.toString())
+              }
+            
+              function getDarkMode() {
+                const storedPreference = localStorage.getItem('darkMode')
+                if (storedPreference !== null) {
+                  isDarkMode.value = storedPreference === 'true'
+                } else {
+                  // Use system preference as default
+                  isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+                }
+                document.documentElement.classList.toggle('dark', isDarkMode.value)
+              }
+            
+              getDarkMode()
+            
+              return {
+                isDarkMode,
+                toggleDarkMode,
+              }
+            })
+            
+[32m        📄 username.ts[39m
+            Contenu :
+            import { ref } from 'vue'
+            import { defineStore } from 'pinia'
+            
+            export const useUsernameStore = defineStore('username', () => {
+              const username = ref('')
+              function setUsername(name: string) {
+                username.value = name
+                localStorage.setItem('username', name)
+                console.log('saved username')
+              }
+              function getUsername() {
+                console.log('get username')
+                username.value = localStorage.getItem('username') || ''
+              }
+            
+              getUsername()
+            
+              return { username, setUsername }
+            })
+            
+[32m    📁 types[39m
+[32m        📄 highlightjs-vue.d.ts[39m
+            Contenu :
+            declare module 'highlightjs-vue' {
+              import { HLJSApi } from 'highlight.js'
+              export default function (hljs: HLJSApi): void
+            }
+            
+[32m    📁 views[39m
+[32m        📄 authentification.vue[39m
+            Contenu :
+            <template>
+              <div>
+                <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-md">
+                  <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Authentification</h1>
+                  <form @submit.prevent="authentificationForm" class="space-y-6">
+                    <div class="authentification-form">
+                      <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                        Mot de Passe
+                      </label>
+                      <input
+                        v-model="formData.password"
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Mot de passe"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                    >
+                      Se connecter
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </template>
+            
+            <script setup lang="ts">
+            import { ref, onMounted } from 'vue'
+            import { useAuthStore } from '@/stores/authentification.ts'
+            import { useRouter } from 'vue-router'
+            
+            const formData = ref({
+              password: '',
+            })
+            
+            const authStore = useAuthStore()
+            const router = useRouter()
+            
+            const authentificationForm = async () => {
+              if (!formData.value.password) {
+                alert("Veuillez fournir le mot de passe")
+                return;
+              }
+            
+              if (formData.value.password !== "admin123") {
+                alert("Le mot de passe n'est pas bon")
+                return;
+              }
+            
+              try {
+                const response = await fetch('https://nuxt-demo-blush.vercel.app/api/login', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(formData.value)
+                });
+            
+                if (!response.ok) {
+                  alert("Erreur lors de l'authentification");
+                  throw new Error("Erreur lors de l'authentification");
+                }
+            
+                const result = await response.json();
+            
+                authStore.setAuth(result.token, result.userId);
+            
+                formData.value = { password: '' };
+                alert("Authentification réussie");
+              } catch (error) {
+                console.error(error);
+                alert('Erreur lors de la requête');
+              }
+            };
+            
+            onMounted(() => {
+              if (authStore.isAuthenticated) {
+                router.push('/formMemeCoin')
+              }
+            })
+            </script>
+            
+[32m        📄 Exercices.vue[39m
+            Contenu :
+            <template>
+              <div class="container mx-auto px-4 py-8">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Liste des Memecoins</h1>
+            
+                <p v-if="error" class="text-red-600 text-center font-medium">{{ error }}</p>
+            
+                <ul v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <li
+                    v-for="coin in memecoins"
+                    :key="coin.id"
+                    class="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center text-center space-y-4"
+                  >
+                    <img
+                      :src="coin.logoUrl"
+                      :alt="`Logo de ${coin.name}`"
+                      class="w-20 h-20 object-contain rounded-full border border-gray-300"
+                    />
+                    <div>
+                      <h2 class="text-xl font-semibold text-gray-800">
+                        {{ coin.name }} ({{ coin.symbol }})
+                      </h2>
+                      <p class="text-sm text-gray-600 mt-2">Description : {{ coin.description }}</p>
+                      <p class="text-sm text-gray-500 mt-1">Propriétaire : {{ coin.owner }}</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </template>
+            
+              <script setup lang="ts">
+              import { ref, onMounted } from 'vue'
+              
+              interface MemeCoin {
+                id: string
+                name: string
+                symbol: string
+                owner: string
+                description: string
+                logoUrl: string
+              }
+              
+              const memecoins = ref<MemeCoin[]>([])
+              const error = ref<string | null>(null)
+              
+              const fetchMemecoins = async (): Promise<void> => {
+                try {
+                  const response = await fetch('https://nuxt-demo-blush.vercel.app/api/get-memecoins')
+                  if (!response.ok) throw new Error('Erreur lors du chargement des données')
+                  const data: MemeCoin[] = await response.json()
+                  memecoins.value = data
+                } catch (err: any) {
+                  error.value = err.message || 'Une erreur est survenue'
+                } finally {
+                }
+              }
+              
+              onMounted(fetchMemecoins)
+              </script>
+            
+              
+[32m        📄 formMemeCoin.vue[39m
+            Contenu :
+            <template>
+                <div v-if="authStore.isAuthenticated" class="flex justify-center items-center min-h-screen">
+                  <form
+                    @submit.prevent="submitForm"
+                    class="w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg space-y-6"
+                  >
+                    <h2 class="text-2xl font-bold text-gray-800 text-center">Créer un MemeCoin</h2>
+              
+                    <div class="form-control">
+                      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                      <input
+                        v-model="formData.name"
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Nom du MemeCoin"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+              
+                    <div class="form-control">
+                      <label for="symbol" class="block text-sm font-medium text-gray-700 mb-1">Symbole</label>
+                      <input
+                        v-model="formData.symbol"
+                        type="text"
+                        id="symbol"
+                        name="symbol"
+                        placeholder="Symbole du MemeCoin"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+              
+                    <div class="form-control">
+                      <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <textarea
+                        v-model="formData.description"
+                        id="description"
+                        name="description"
+                        placeholder="Description du MemeCoin"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                        rows="4"
+                      ></textarea>
+                    </div>
+              
+                    <div class="form-control">
+                      <label for="logoUrl" class="block text-sm font-medium text-gray-700 mb-1">Logo URL</label>
+                      <input
+                        v-model="formData.logoUrl"
+                        type="text"
+                        id="logoUrl"
+                        name="logoUrl"
+                        placeholder="URL du logo du MemeCoin"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+              
+                    <button
+                      type="submit"
+                      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200"
+                    >
+                      Créer le MemeCoin
+                    </button>
+                  </form>
+                </div>
+              
+                <div v-else class="text-center mt-20">
+                  <p class="text-lg text-gray-700 mb-4">Vous devez être connecté pour créer un MemeCoin.</p>
+                  <RouterLink
+                    to="/authentification"
+                    class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Se connecter
+                  </RouterLink>
+                </div>
+              </template>
+            <script setup lang="ts">
+                import { ref } from 'vue'
+                import { useAuthStore } from '@/stores/authentification'
+                import { RouterLink } from 'vue-router'
+              
+                const authStore = useAuthStore()
+              
+                const formData = ref({
+                    name: '',
+                    symbol: '',
+                    description: '',
+                    logoUrl: ''
+                })
+              
+                const submitForm = async () => {
+                    if (!formData.value.name || !formData.value.symbol) {
+                        alert('Veuillez remplir tous les champs obligatoires.')
+                        return
+                    }
+              
+                    if (
+                        formData.value.name.length < 4 ||
+                        formData.value.name.length > 16 ||
+                        formData.value.symbol.length < 2 ||
+                        formData.value.symbol.length > 4 ||
+                        formData.value.logoUrl.length > 200 ||
+                        formData.value.description.length > 1000
+                    ) {
+                        alert('Faites attention aux limites de caractères :\nNom : 4-16 caractères\nSymbole : 2-4 caractères\nLogo URL : 200 caractères max\nDescription : 1000 caractères max')
+                        return
+                    }
+              
+                    console.log(JSON.stringify(formData.value))
+              
+                    try {
+                        const response = await fetch('https://nuxt-demo-blush.vercel.app/api/create-memecoin-protected', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${authStore.token}`
+                        },
+                        body: JSON.stringify(formData.value)
+                    })
+              
+                    if (!response.ok) {
+                        alert('Erreur lors de la création du MemeCoin')
+                        return
+                    }
+              
+                    formData.value = { name: '', symbol: '', description: '', logoUrl: '' }
+                    alert('MemeCoin créé avec succès !')
+                    } catch (error) {
+                        console.error(error)
+                        alert('Erreur lors de la requête')
+                    }
+                }
+            </script>
+              
+[32m        📄 FundamentalsView.vue[39m
+            Contenu :
+            <template>
+              <Examples :examples="examples" />
+            </template>
+            
+            <script setup lang="ts">
+            import TemplateSyntax from '@/components/fundamentals/TemplateSyntax.vue'
+            import TemplateSyntaxSource from '@/components/fundamentals/TemplateSyntax.vue?raw'
+            import PassingProps from '@/components/fundamentals/PassingProps.vue'
+            import PassingPropsSource from '@/components/fundamentals/PassingProps.vue?raw'
+            import ClassesBindingSource from '@/components/fundamentals/ClassesBinding.vue?raw'
+            import TemplateRefs from '@/components/fundamentals/TemplateRefs.vue'
+            import TemplateRefsSource from '@/components/fundamentals/TemplateRefs.vue?raw'
+            import LifeCycle from '@/components/fundamentals/LifeCycle.vue'
+            import LifeCycleSource from '@/components/fundamentals/LifeCycle.vue?raw'
+            import Slots from '@/components/fundamentals/Slots.vue'
+            import SlotsSource from '@/components/fundamentals/Slots.vue?raw'
+            import SlotSource from '@/components/fundamentals/Slot.vue?raw'
+            import Examples from '@/components/Examples.vue'
+            import type { ExampleProps } from '@/components/Example.vue'
+            import { parse } from '@/lib/md'
+            
+            const examples: Array<ExampleProps> = [
+              {
+                name: 'Template Syntax',
+                components: [TemplateSyntax],
+                sources: [TemplateSyntaxSource],
+                description: parse(`
+            Chaque fichier \`.vue\` est un composant, qui est separé en une partie template et une partie script.
+            
+            La partie template est la partie HTML qui sera affichée.
+            
+            La partie script est la partie JavaScript qui contient la logique du composant.`),
+              },
+              {
+                name: 'Components and slots',
+                description: parse(`
+            Les composants sont des blocks d'interface réutilisables.
+            
+            On aura un fichier par composant, et celui-ci sera nommé en PascalCase. 
+            
+            Afin d'utiliser un composant, on doit d'abord l'importer.  
+            
+            Les slots sont des emplacements dans un composant qui peuvent etre remplis par le parent avec du contenu qui sera remplacé à l'emplacement de \`<slot/>\`. 
+            `),
+                components: [Slots],
+                sources: [SlotsSource, SlotSource],
+                sourcesNames: ['Slots', 'Slot'],
+              },
+              {
+                name: 'Class Bindings',
+                description: parse(`
+            Les classes peuvent etre bindées à des variables dans le template de differentes façons.
+                `),
+                components: [PassingProps],
+                sources: [ClassesBindingSource],
+                sourcesNames: ['ClassesBinding'],
+              },
+              {
+                name: 'Passing Props',
+                description:
+                  'Les props sont des variables passées à un composant. Elles sont typées et peuvent être optionnelles ou obligatoires. <br/> Les props sont passées à un composant dans le template, et doivent être definies avec <code>defineProps</code>',
+                components: [],
+                sources: [PassingPropsSource],
+                sourcesNames: ['PassingProps'],
+              },
+              {
+                name: 'Template Refs',
+                description:
+                  'Les template refs sont des références à des éléments du DOM. Elles sont utilisées pour accéder à des éléments du DOM et les manipuler. <br/> Les template refs sont déclarés avec <code>ref</code> dans la partie script.',
+                components: [TemplateRefs],
+                sources: [TemplateRefsSource],
+              },
+              {
+                name: 'LifeCycle',
+                description:
+                  "Le cycle de vie d'un composant est le processus par lequel un composant est créé, mis à jour et détruit. <br/> Les hooks de cycle de vie sont des fonctions qui sont appelées à des moments critiques du cycle de vie d'un composant.",
+                components: [LifeCycle],
+                sources: [LifeCycleSource],
+              },
+            ]
+            </script>
+            
+[32m        📄 HomeView.vue[39m
+            Contenu :
+            <script setup lang="ts"></script>
+            
+            <template>
+              <div class="prose">
+                <h2 class="my-8">Links to documentation</h2>
+                <div class="flex flex-col gap-4">
+                  <a href="https://vuejs.org/">Vue</a>
+            
+                  <h3>Outils</h3>
+                  <a href="https://router.vuejs.org/">Router</a>
+                  <a href="https://pinia.vuejs.org/">Pinia</a>
+            
+                  <h3>Frameworks</h3>
+                  <a href="https://nuxt.com/">Nuxt</a>
+            
+                  <h3>UI</h3>
+                  <a href="https://tailwindcss.com/">TailwindCSS</a>
+                  <a href="https://daisyui.com/">DaisyUI</a>
+                  <a href="https://www.shadcn-vue.com/">Shadcn Vue</a>
+                </div>
+              </div>
+            </template>
+            
+[32m        📄 NotFoundView.vue[39m
+            Contenu :
+            <template>
+              <div>
+                <h1>404</h1>
+                <p>Page not found</p>
+              </div>
+            </template>
+            
+[32m        📄 RoutingView.vue[39m
+            Contenu :
+            <template>
+              <Examples :examples="examples" />
+            </template>
+            
+            <script setup lang="ts">
+            import RouterSource from '@/router/index.ts?raw'
+            import LayoutSource from '@/layouts/DefaultLayout.vue?raw'
+            import NavSource from '@/components/Nav.vue?raw'
+            import RewriteSource from '@/../vercel.json?raw'
+            import Examples from '@/components/Examples.vue'
+            
+            const examples = [
+              {
+                name: 'Routing',
+                description:
+                  'Le router sera géré par vue-router et il capturera toutes les routes demandées et affichera les composants associés, sans rechargement de la page. <br/>Pour rappel, le serveur doit toujours retourner le <code>index.html</code>, quel que soit la page pour avoir un comportement <b>SPA</b> <i>(rewrite)</i> .',
+                components: [],
+                sources: [RouterSource, LayoutSource, NavSource, RewriteSource],
+                sourcesNames: ['Router', 'Layout', 'Nav', 'vercel.json'],
+                sourcesLangs: ['typescript', 'vue', 'vue', 'json'],
+              },
+            ]
+            </script>
+            
+[32m        📄 StateView.vue[39m
+            Contenu :
+            <template>
+              <Examples :examples="examples" />
+            </template>
+            
+            <script setup lang="ts">
+            import Reactivity from '@/components/state/Reactivity.vue'
+            import ReactivitySource from '@/components/state/Reactivity.vue?raw'
+            
+            import Binding from '@/components/state/Binding.vue'
+            import BindingSource from '@/components/state/Binding.vue?raw'
+            
+            import CountComposable from '@/components/state/CountComposable.vue'
+            import CountComposableComponentSource from '@/components/state/CountComposable.vue?raw'
+            import CountComposableSource from '@/composables/count.ts?raw'
+            
+            import CountStore from '@/components/state/CountStore.vue'
+            import CountStoreComponentSource from '@/components/state/CountStore.vue?raw'
+            import CountStoreSource from '@/stores/counter.ts?raw'
+            
+            import Ethereum from '@/components/state/Ethereum.vue'
+            import EthereumSource from '@/components/state/Ethereum.vue?raw'
+            import EthereumComposableSource from '@/composables/eth.ts?raw'
+            
+            import UsernameStore from '@/components/state/UsernameStore.vue'
+            import UsernameStoreComponentSource from '@/components/state/UsernameStore.vue?raw'
+            import UsernameStoreSource from '@/stores/username.ts?raw' with { type: 'text' }
+            
+            import Examples from '@/components/Examples.vue'
+            import { parse } from '@/lib/md'
+            
+            const examples = [
+              {
+                name: 'Reactivity',
+                description: parse(`
+            Afin que les données affichées soit réactives (affichage mis à jour quand la donnée change), il faut utiliser des variables de type réactives.
+            
+            En Vue, on utilise soit\`ref\` soit \`reactive\` pour créer des variables réactives.
+            
+            Pour une variable de type \`ref\` , dans la partie script, on lit/ecrit les valeurs avec \`variable.value\` et dans le template, on utilise juste \`variable\`.
+                `),
+                components: [Reactivity],
+                sources: [ReactivitySource],
+              },
+              {
+                name: 'Binding',
+                description:
+                  'le binding sert a lier une variable reactive à un element du DOM, avec mise à jour dans les deux sens.',
+                components: [Binding],
+                sources: [BindingSource],
+              },
+              {
+                name: 'Count Composable',
+                description:
+                  "Les composables sont des fonctions qui contiennent une logique d'état local qui peut etre utilisé à plusieurs endroits, mais de manière independante",
+                components: [CountComposable, CountComposable],
+                sources: [CountComposableComponentSource, CountComposableSource],
+                sourcesNames: ['CountComposableComponent', 'CountComposable'],
+                sourcesLangs: ['vue', 'typescript'],
+              },
+              {
+                name: 'Count Store',
+                description:
+                  "Les stores (Pinia) sont des fonctions qui contiennent une logique d'état globale qui peut etre utilisé à plusieurs endroits, et qui garde les memes valeurs partout dans l'application",
+                components: [CountStore, CountStore],
+                sources: [CountStoreComponentSource, CountStoreSource],
+                sourcesNames: ['CountStoreComponent', 'CountStore'],
+                sourcesLangs: ['vue', 'typescript'],
+              },
+              {
+                name: 'Ethereum composable',
+                description:
+                  "Exemple d'un composable qui se mettra à jour tout seul. <br/> Attention, ceci est un mauvais exemple, car si il est utilisé à plusieurs endroits, il y aura duplication des requêtes inutiles. <br/> Pour ce genre de cas, on utilisera plutôt un store ou un fetch de type <b>StaleWhileRevalidate</b>.",
+                components: [Ethereum],
+                sources: [EthereumSource, EthereumComposableSource],
+                sourcesNames: ['Ethereum', 'EthereumComposable'],
+                sourcesLangs: ['vue', 'typescript'],
+              },
+              {
+                name: 'Username store with localStorage',
+                components: [UsernameStore],
+                sources: [UsernameStoreComponentSource, UsernameStoreSource],
+                sourcesNames: ['UsernameStoreComponent', 'UsernameStore'],
+                sourcesLangs: ['vue', 'typescript'],
+              },
+            ]
+            </script>
+            
+[32m        📄 TestsView.vue[39m
+            Contenu :
+            <template>
+              <Examples :examples="examples" />
+            </template>
+            
+            <script setup lang="ts">
+            import SlotSource from '@/components/fundamentals/Slot.vue?raw'
+            import SlotTestSource from '@/components/fundamentals/__tests__/Slot.vue.test.ts?raw'
+            
+            import CountComposableSource from '@/composables/count.ts?raw'
+            import CountComposableTestSource from '@/composables/__test__/count.test.ts?raw'
+            
+            import CounterStoreSource from '@/stores/counter.ts?raw'
+            import CounterStoreTestSource from '@/stores/counter.test.ts?raw'
+            
+            import E2ETests from '../../e2e/app.spec.ts?raw'
+            
+            import Examples from '@/components/Examples.vue'
+            
+            const examples = [
+              {
+                name: 'Slot',
+                description:
+                  "Test unitaires, on va verifier qu'un composant isolé fait bien son travail. <br/> On a besoin d'une lib (vue test-utils) pour 'monter' un composant en mémoire et simuler une application",
+                components: [],
+                sources: [SlotSource, SlotTestSource],
+                sourcesNames: ['Slot', 'Slot.test'],
+                sourcesLangs: ['vue', 'typescript'],
+              },
+              {
+                name: 'Count Composable',
+                description: 'On peut tester les composables de manières très simple',
+                components: [],
+                sources: [CountComposableSource, CountComposableTestSource],
+                sourcesNames: ['Count', 'Count.test'],
+                sourcesLangs: ['typescript', 'typescript'],
+              },
+              {
+                name: 'Counter Store',
+                description: 'Pour tester les stores, il faut re-creer un store Pinia frais à chaque test',
+                components: [],
+                sources: [CounterStoreSource, CounterStoreTestSource],
+                sourcesNames: ['Counter', 'Counter.test'],
+                sourcesLangs: ['typescript', 'typescript'],
+              },
+              {
+                name: 'End 2 End Tests',
+                description:
+                  "Tests complet via un navigateur sur l'application, on va verifier que tout est bien relié et a le comportement souhaité. ",
+                components: [],
+                sources: [E2ETests],
+                sourcesNames: ['app.spec.ts'],
+                sourcesLangs: ['typescript'],
+              },
+            ]
+            </script>
+            
+[32m📄 tsconfig.app.json[39m
+    Contenu :
+    {
+      "extends": "@vue/tsconfig/tsconfig.dom.json",
+      "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+      "exclude": ["src/**/__tests__/*"],
+      "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    
+        "paths": {
+          "@/*": ["./src/*"]
+        }
+      }
+    }
+    
+[32m📄 tsconfig.json[39m
+    Contenu :
+    {
+      "files": [],
+      "references": [
+        {
+          "path": "./tsconfig.node.json"
+        },
+        {
+          "path": "./tsconfig.app.json"
+        },
+        {
+          "path": "./tsconfig.vitest.json"
+        }
+      ]
+    }
+    
+[32m📄 tsconfig.node.json[39m
+    Contenu :
+    {
+      "extends": "@tsconfig/node22/tsconfig.json",
+      "include": [
+        "vite.config.*",
+        "vitest.config.*",
+        "cypress.config.*",
+        "nightwatch.conf.*",
+        "playwright.config.*",
+        "eslint.config.*"
+      ],
+      "compilerOptions": {
+        "noEmit": true,
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "types": ["node"]
+      }
+    }
+    
+[32m📄 tsconfig.vitest.json[39m
+    Contenu :
+    {
+      "extends": "./tsconfig.app.json",
+      "include": ["src/**/__tests__/*", "env.d.ts"],
+      "exclude": [],
+      "compilerOptions": {
+        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
+    
+        "lib": [],
+        "types": ["node", "jsdom"]
+      }
+    }
+    
+[32m📄 vercel.json[39m
+    Contenu :
+    {
+      "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    }
+    
+[32m📄 vite.config.ts[39m
+    Contenu :
+    import { fileURLToPath, URL } from 'node:url'
+    
+    import { defineConfig } from 'vite'
+    import vue from '@vitejs/plugin-vue'
+    import vueDevTools from 'vite-plugin-vue-devtools'
+    import tailwindcss from '@tailwindcss/vite'
+    
+    // https://vite.dev/config/
+    export default defineConfig({
+      plugins: [vue(), vueDevTools(), tailwindcss()],
+      resolve: {
+        alias: {
+          '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
+      },
+    })
+    
+[32m📄 vitest.config.ts[39m
+    Contenu :
+    import { fileURLToPath } from 'node:url'
+    import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
+    import viteConfig from './vite.config'
+    // import vue from '@vitejs/plugin-vue'
+    // import tailwindcss from '@tailwindcss/vite'
+    
+    export default mergeConfig(
+      viteConfig,
+      defineConfig({
+        // plugins: [
+        //   vue({
+        //     template: {
+        //       compilerOptions: {
+        //         isCustomElement: (tag) => ['highlightjs'].includes(tag),
+        //       },
+        //     },
+        //   }),
+        //   tailwindcss(),
+        // ],
+        test: {
+          environment: 'jsdom',
+          exclude: [...configDefaults.exclude, 'e2e/**'],
+          root: fileURLToPath(new URL('./', import.meta.url)),
+          setupFiles: ['./src/components/__tests__/setup.ts'],
+        },
+      }),
+    )
+    

@@ -65,7 +65,6 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useMemecoinStore } from '@/stores/memecoinsStore.ts'
 import { useAuthStore } from '@/stores/authStore'
-import {kMaxLength} from "node:buffer";
 
 const store = useMemecoinStore()
 const authStore = useAuthStore()

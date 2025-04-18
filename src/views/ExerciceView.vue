@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, watch, onMounted, toRaw } from 'vue'
+import { useTokenStore } from "../stores/token";
 
+const tokenStore = useTokenStore()
 const isResetting = ref(false)
 
 interface CreateCoin {
@@ -75,6 +77,7 @@ onMounted(async () => {
 })
 
 function publishCoin() {
+    let token;
   if (Object.values(errors).some((error) => error !== null)) {
     console.log('Formulaire invalide')
     return
@@ -82,10 +85,11 @@ function publishCoin() {
   console.log('Formulaire valide', form)
   const formRaw = toRaw(form);
   console.log(formRaw);
-  fetch("https://nuxt-demo-blush.vercel.app/api/create-memecoin", {
+  fetch("https://nuxt-demo-blush.vercel.app/api/create-memecoin-protected", {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${tokenStore.token}`
     },
     body: JSON.stringify(formRaw)
   }).then(async () => {
@@ -116,7 +120,7 @@ function publishCoin() {
 <template>
   <div>
     <ul>
-      <li v-for="coin in coinList.slice(-3)" :key="coin.symbol" class="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+      <li v-if="coinList" v-for="coin in coinList.slice(-10)" :key="coin.symbol" class="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow">
         <div class="flex-shrink-0">
           <img :src="coin.logoUrl" alt="Logo du Memecoin" class="w-16 h-16 object-cover rounded-full" />
         </div>

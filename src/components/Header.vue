@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import Nav from '@/components/Nav.vue'
+import NavMobile from '@/components/NavMobile.vue'
+import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+import { useConnexionStore } from '@/stores/user'
+
+const { isConnected } = useConnexionStore() 
+</script>
+
+
 <template>
   <header class="navbar bg-base-100 shadow-sm">
     <div class="navbar-start">
@@ -24,14 +34,17 @@
       <h1 class="text-2xl">Vue Demo</h1>
     </div>
     <Nav />
+    <div class="text-sm font-medium">
+      <p>État :</p>
+      <span :class="isConnected ? 'text-green-600' : 'text-red-600'">
+         {{ isConnected ? 'Connecté' : 'Déconnecté' }}
+      </span>
+
+    </div>
     <div class="navbar-end">
       <DarkModeSwitch />
     </div>
   </header>
 </template>
 
-<script setup lang="ts">
-import Nav from '@/components/Nav.vue'
-import NavMobile from '@/components/NavMobile.vue'
-import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
-</script>
+

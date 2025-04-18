@@ -1,29 +1,33 @@
 <script setup lang="ts">
-import { reactive, ref , watch } from 'vue'
-import { useTokenStore } from '@/stores/user'
+import { reactive, ref, watch } from 'vue'
+import { useConnexionStore } from '@/stores/user'
 
-const tokenStore = useTokenStore()
+const connexionStore = useConnexionStore()
 
-const etatconnexion = ref(false)
-
-interface login {
+interface LoginForm {
   password: string
 }
 
 type Errors = Record<string, string | null>
 
-const form = reactive<login>({
+const form = reactive<LoginForm>({
   password: ''
 })
 
 const errors = reactive<Errors>({
-  password: null,
+  password: null
 })
 
 const successMessage = ref<string | null>(null)
-const errorMessage = ref<string | null>(null) // ← ajouté ici
+const errorMessage = ref<string | null>(null)
 
 async function loginTest() {
+  // Validation manuelle avant soumission
+  if (!form.password || form.password.length < 4) {
+    errors.password = 'Le mot de passe doit contenir au moins 4 caractères'
+    return
+  }
+
   if (Object.values(errors).some(error => error !== null)) {
     console.log('Formulaire invalide')
     return
@@ -32,34 +36,30 @@ async function loginTest() {
   try {
     const body = JSON.stringify(form)
     console.log('Formulaire soumis:', body)
+
     const response = await fetch("https://nuxt-demo-blush.vercel.app/api/login", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: body
+      body
     })
 
     if (!response.ok) {
       if (response.status === 401) {
         console.log("Mot de passe incorrect")
         errorMessage.value = "Mot de passe incorrect"
+        return // On arrête ici
       }
       throw new Error(`Échec de la requête: ${response.status}`)
     }
 
-    etatconnexion.value = true
+    const data = await response.json()
+    console.log('Réponse de l\'API:', data)
+
+    
+    connexionStore.setConnexionTrue()
     successMessage.value = 'Vous êtes connecté !'
-    errorMessage.value = null // ← reset en cas de succès
-    console.log('Vous êtes connecté ', form)
+    errorMessage.value = null
     form.password = ''
-
-    response.json().then(data => {
-      console.log('Réponse de l\'API:', data)
-      const { token, userId } = data
-
-      // Stocker dans le store Pinia
-      tokenStore.setCredentials(token, userId)
-    })
-
 
     setTimeout(() => {
       successMessage.value = null
@@ -67,28 +67,27 @@ async function loginTest() {
 
   } catch (error) {
     console.error('Erreur lors de la soumission du formulaire:', error)
+    errorMessage.value = 'Une erreur est survenue. Veuillez réessayer.'
   }
 }
 
-watch(form, (newForm) => {
-  if (newForm.password.length < 4) {
-    errors.password = 'Le password doit faire + de 4 caractères'
-  } else {
-    errors.password = null
-  }
+// Watch spécifique sur le champ password
+watch(() => form.password, (newVal) => {
+  errors.password = newVal.length < 4 ? 'Le mot de passe doit contenir au moins 4 caractères' : null
 })
-
 </script>
+
 <template>
   <div class="w-full">
     <h1 class="text-4xl font-bold text-center text-primary mb-6">Connecte-toi !</h1>
     <form @submit.prevent="loginTest" class="flex flex-col gap-4">
-      <label for="password" class="block">Password :</label>
+
+      <label for="password" class="block">Mot de passe :</label>
       <input 
         v-model="form.password" 
         id="password"
         class="input w-full"   
-        placeholder="Entrez le password"
+        placeholder="Entrez le mot de passe"
         required
       />
 

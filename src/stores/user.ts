@@ -1,24 +1,28 @@
-import { ref } from 'vue'
+// src/stores/user.ts
 import { defineStore } from 'pinia'
+import { ref , computed  } from 'vue'
 
-export const useTokenStore = defineStore('token', () => {
-  const token = ref<string | null>(null)
-  const userId = ref<string | null>(null)
+export const useConnexionStore = defineStore('connexion', () => {
+  const etatConnexion = ref(false)
 
-  function setCredentials(newToken: string, newUserId: string) {
-    token.value = newToken
-    userId.value = newUserId
+  function setConnexion(value: boolean) {
+    etatConnexion.value = value
   }
-
-  function clearCredentials() {
-    token.value = null
-    userId.value = null
+  function setConnexionTrue() {
+    etatConnexion.value = true
   }
+  function setConnexionFalse() {
+    etatConnexion.value = false
+  }
+  const isConnected = computed(() => etatConnexion.value)
+
 
   return {
-    token,
-    userId,
-    setCredentials,
-    clearCredentials
+    etatConnexion,
+    setConnexion,
+    setConnexionTrue,
+    setConnexionFalse,
+    isConnected
+    
   }
 })

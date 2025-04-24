@@ -36,3 +36,5 @@ export const useMemecoinStore = defineStore('memecoins', {
     }
   }
 })
+
+

@@ -25,13 +25,17 @@
     </div>
     <Nav />
     <div class="navbar-end">
+      <Profile />
       <DarkModeSwitch />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import Nav from '@/components/Nav.vue'
-import NavMobile from '@/components/NavMobile.vue'
-import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+
+import Nav from '@/components/Nav.vue';
+import NavMobile from '@/components/NavMobile.vue';
+import DarkModeSwitch from '@/components/DarkModeSwitch.vue';
+import Profile from '@/components/Profile.vue'
+
 </script>

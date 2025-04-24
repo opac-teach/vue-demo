@@ -23,7 +23,7 @@ import EthereumComposableSource from '@/composables/eth.ts?raw'
 
 import UsernameStore from '@/components/state/UsernameStore.vue'
 import UsernameStoreComponentSource from '@/components/state/UsernameStore.vue?raw'
-import UsernameStoreSource from '@/stores/username.ts?raw' with { type: 'text' }
+import UsernameStoreSource from '@/stores/userStore.ts?raw' with { type: 'text' }
 
 import Examples from '@/components/Examples.vue'
 import { parse } from '@/lib/md'

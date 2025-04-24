@@ -1,15 +1,15 @@
 <template>
   <div class="">
-    <span>username: {{ usernameStore.username }}</span>
+    <span>username: {{ userStore.username }}</span>
     <input class="input" v-model="username" />
-    <button class="btn" @click="usernameStore.setUsername(username)">Set username</button>
+    <button class="btn" @click="userStore.setUsername(username)">Set username</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useUsernameStore } from '@/stores/username'
+import { useUserStore } from '@/stores/userStore.ts'
 import { ref } from 'vue'
 
-const usernameStore = useUsernameStore()
+const userStore = useUserStore()
 const username = ref('')
 </script>

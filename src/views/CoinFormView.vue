@@ -1,7 +1,12 @@
 <template>
-  <div class="p-6 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-semibold mt-10 mb-4">Formulaire</h1>
-    <div class="shadow-md rounded-xl p-6 border">
+  <div class="m-auto p-6 max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Créer un MemeCoin</h1>
+
+    <div v-if="successMsg" class="fixed top-20 right-4 z-50 px-4 py-2 bg-green-500/75 rounded shadow transition-all duration-300 text-white text-sm">
+      {{ successMsg }}
+    </div>
+
+    <div v-if="authStore.isAuthenticated" class="shadow-md rounded-xl p-6 border">
       <form @submit.prevent="submitForm" class="space-y-4">
         <div>
           <label for="name" class="block text-sm font-medium">Nom :</label>
@@ -37,86 +42,98 @@
         </div>
       </form>
     </div>
+
+    <div v-else>
+      <p>Pour afficher plus d'informations, une connexion est requise !</p>
+      <div class="flex justify-center mt-5 mb-6">
+        <RouterLink to="/auth-form" class="btn">Se connecter</RouterLink>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 
-import { ref, computed, watch } from 'vue';
-import { useMemecoinStore } from '@/stores/memeCoinsStore.ts';
+import { ref, computed, watch } from "vue";
+import { useMemecoinStore } from "@/stores/memeCoinsStore.ts";
+import { useAuthStore } from "@/stores/authStore";
+import { RouterLink } from "vue-router";
 
-const formData = ref({
-  name: '',
-  symbol: '',
-  description: '',
-  logoUrl: ''
-});
-
-const errors = ref({
-  name: '',
-  symbol: '',
-  description: '',
-  logoUrl: '',
-  api: ''
-});
-
+const successMsg = ref("");
+const formData = ref({ name: "", symbol: "", description: "", logoUrl: "" });
+const errors = ref({ name: "", symbol: "", description: "", logoUrl: "", api: "" });
 const store = useMemecoinStore();
+const ignoreWatch = ref(false);
+const authStore = useAuthStore();
 
 watch(() => formData.value.name, (newVal) => {
+
+  if (ignoreWatch.value) return;
+
   if (newVal.length < 4 || newVal.length > 16) {
-    errors.value.name = 'Le nom doit contenir entre 4 et 16 caractères.';
+    errors.value.name = "Le nom doit contenir entre 4 et 16 caractères.";
   } else {
-    errors.value.name = '';
+    errors.value.name = "";
   }
 });
 
 watch(() => formData.value.symbol, (newVal) => {
+
   const symbolRegex = /^[A-Z]{2,4}$/;
+
+  if (ignoreWatch.value) return;
+
   if (!symbolRegex.test(newVal)) {
-    errors.value.symbol = 'Le symbole doit être en majuscules et contenir entre 2 et 4 lettres.';
+    errors.value.symbol = "Le symbole doit être en majuscules et contenir entre 2 et 4 lettres.";
   } else {
-    errors.value.symbol = '';
+    errors.value.symbol = "";
   }
 });
 
 watch(() => formData.value.description, (newVal) => {
+
+  if (ignoreWatch.value) return;
+
   if (newVal.length > 1000) {
-    errors.value.description = 'La description ne peut pas dépasser 1000 caractères.';
+    errors.value.description = "La description ne peut pas dépasser 1000 caractères.";
   } else {
-    errors.value.description = '';
+    errors.value.description = "";
   }
 });
 
 watch(() => formData.value.logoUrl, (newVal) => {
+
+  if (ignoreWatch.value) return;
+
   if (newVal && !/^https?:\/\/.+\..+/.test(newVal)) {
-    errors.value.logoUrl = 'L’URL du logo est invalide.';
+    errors.value.logoUrl = "L’URL du logo est invalide.";
   } else {
-    errors.value.logoUrl = '';
+    errors.value.logoUrl = "";
   }
 });
 
 const validateForm = () => {
   let valid = true;
-  errors.value = { name: '', symbol: '', description: '', logoUrl: '', api: '' };
+  errors.value = { name: "", symbol: "", description: "", logoUrl: "", api: "" };
 
   if (formData.value.name.length < 4 || formData.value.name.length > 16) {
-    errors.value.name = 'Le nom doit contenir entre 4 et 16 caractères.';
+    errors.value.name = "Le nom doit contenir entre 4 et 16 caractères.";
     valid = false;
   }
 
   const symbolRegex = /^[A-Z]{2,4}$/;
   if (!symbolRegex.test(formData.value.symbol)) {
-    errors.value.symbol = 'Le symbole doit être en majuscules et contenir entre 2 et 4 lettres.';
+    errors.value.symbol = "Le symbole doit être en majuscules et contenir entre 2 et 4 lettres.";
     valid = false;
   }
 
   if (formData.value.description.length > 1000) {
-    errors.value.description = 'La description ne peut pas dépasser 1000 caractères.';
+    errors.value.description = "La description ne peut pas dépasser 1000 caractères.";
     valid = false;
   }
 
   if (formData.value.logoUrl && !/^https?:\/\/.+\..+/.test(formData.value.logoUrl)) {
-    errors.value.logoUrl = 'L’URL du logo est invalide.';
+    errors.value.logoUrl = "L’URL du logo est invalide.";
     valid = false;
   }
 
@@ -127,21 +144,35 @@ const submitForm = async () => {
   if (!validateForm()) return;
 
   try {
-
-    const response = await fetch('https://nuxt-demo-blush.vercel.app/api/create-memecoin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("https://nuxt-demo-blush.vercel.app/api/create-memecoin-protected", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${authStore.token}`
+      },
       body: JSON.stringify(formData.value)
     });
 
-    if (!response.ok) throw new Error('Échec de la création du memecoin');
+    if (!response.ok) throw new Error("Échec de la création du memecoin");
 
     await store.fetchAll();
 
-    formData.value = { name: "", symbol: "", description: "", logoUrl: ""}
+    ignoreWatch.value = true;
+    formData.value = { name: "", symbol: "", description: "", logoUrl: "" };
+    errors.value = { name: "", symbol: "", description: "", logoUrl: "", api: "" };
+
+    setTimeout(() => {
+      ignoreWatch.value = false;
+    }, 100);
+
+    successMsg.value = "MemeCoin créé avec succès ! 🎉";
+    setTimeout(() => {
+      successMsg.value = "";
+    }, 1500);
 
   } catch (error) {
     console.error("Erreur lors de la création du memecoin:", error);
+    errors.value.api = "Une erreur est survenue. Veuillez réessayer.";
   }
 };
 

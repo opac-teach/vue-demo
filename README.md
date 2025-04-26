@@ -4,6 +4,10 @@ This is an example project with a demo how to use VueJS
 
 https://vuejs-demo-three.vercel.app/
 
+### Course content
+
+https://teach.opac.me/cours/dev-frontend/vuejs
+
 ## Setup
 
 Make sure to install dependencies:

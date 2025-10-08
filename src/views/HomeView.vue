@@ -8,7 +8,7 @@
 
       <h3>Outils</h3>
       <a href="https://router.vuejs.org/">Router</a>
-      <a href="https://pinia.vuejs.org/">Pinia</a>
+      <a href="https://pinia.vuejs.org/">Pinia (store)</a>
 
       <h3>Frameworks</h3>
       <a href="https://nuxt.com/">Nuxt</a>

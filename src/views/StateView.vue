@@ -1,5 +1,7 @@
 <template>
   <Examples :examples="examples" />
+  <h1>Exercices</h1>
+  <StateExercices />
 </template>
 
 <script setup lang="ts">
@@ -17,15 +19,20 @@ import CountStore from '@/components/state/CountStore.vue'
 import CountStoreComponentSource from '@/components/state/CountStore.vue?raw'
 import CountStoreSource from '@/stores/counter.ts?raw'
 
+import DataFetching from '@/components/state/DataFetching.vue'
+import DataFetchingSource from '@/components/state/DataFetching.vue?raw'
+
 import Ethereum from '@/components/state/Ethereum.vue'
 import EthereumSource from '@/components/state/Ethereum.vue?raw'
 import EthereumComposableSource from '@/composables/eth.ts?raw'
 
 import UsernameStore from '@/components/state/UsernameStore.vue'
 import UsernameStoreComponentSource from '@/components/state/UsernameStore.vue?raw'
-import UsernameStoreSource from '@/stores/username.ts?raw' with { type: 'text' }
+import UsernameStoreSource from '@/stores/username.ts?raw'
 
 import Examples from '@/components/Examples.vue'
+
+import StateExercices from '@/components/exercices/State.vue'
 import { parse } from '@/lib/md'
 
 const examples = [
@@ -59,12 +66,23 @@ Pour une variable de type \`ref\` , dans la partie script, on lit/ecrit les vale
   },
   {
     name: 'Count Store',
-    description:
-      "Les stores (Pinia) sont des fonctions qui contiennent une logique d'état globale qui peut etre utilisé à plusieurs endroits, et qui garde les memes valeurs partout dans l'application",
+    description: parse(`
+Les stores [Pinia](https://pinia.vuejs.org) sont des fonctions qui contiennent une logique d'état globale qui peut etre utilisé à plusieurs endroits, et qui garde les memes valeurs partout dans l'application.
+`),
     components: [CountStore, CountStore],
     sources: [CountStoreComponentSource, CountStoreSource],
     sourcesNames: ['CountStoreComponent', 'CountStore'],
     sourcesLangs: ['vue', 'typescript'],
+  },
+  {
+    name: 'Data Fetching',
+    description: parse(`
+Pour récupérer des données externes, on fera des appels API à un serveur. Ces appels ne peuvent être effectués qu'apres la page chargée, donc la page initiale ne pourra pas contenir la données. 
+`),
+    components: [DataFetching],
+    sources: [DataFetchingSource],
+    sourcesNames: ['DataFetching'],
+    sourcesLangs: ['vue'],
   },
   {
     name: 'Ethereum composable',

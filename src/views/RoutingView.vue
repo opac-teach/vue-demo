@@ -1,5 +1,7 @@
 <template>
   <Examples :examples="examples" />
+  <h1 class="">Exercices</h1>
+  <RoutingExercices />
 </template>
 
 <script setup lang="ts">
@@ -8,6 +10,7 @@ import LayoutSource from '@/layouts/DefaultLayout.vue?raw'
 import NavSource from '@/components/Nav.vue?raw'
 import RewriteSource from '@/../vercel.json?raw'
 import Examples from '@/components/Examples.vue'
+import RoutingExercices from '@/components/exercices/Routing.vue'
 
 const examples = [
   {

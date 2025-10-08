@@ -15,4 +15,15 @@
   code {
     @apply text-accent-content;
   }
+
+  h1 {
+    @apply text-xl font-bold mb-4;
+  }
+  h2 {
+    @apply text-lg font-bold mb-2;
+  }
+
+  a {
+    @apply underline;
+  }
 }

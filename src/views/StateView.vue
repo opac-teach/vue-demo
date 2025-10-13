@@ -1,7 +1,5 @@
 <template>
   <Examples :examples="examples" />
-  <h1>Exercices</h1>
-  <StateExercices />
 </template>
 
 <script setup lang="ts">
@@ -32,12 +30,11 @@ import UsernameStoreSource from '@/stores/username.ts?raw'
 
 import Examples from '@/components/Examples.vue'
 
-import StateExercices from '@/components/exercices/State.vue'
 import { parse } from '@/lib/md'
 
 const examples = [
   {
-    name: 'Reactivity',
+    name: 'Reactivité',
     description: parse(`
 Afin que les données affichées soit réactives (affichage mis à jour quand la donnée change), il faut utiliser des variables de type réactives.
 

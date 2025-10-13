@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col space-y-4 divide-y">
     <ClassesBinding :isPair="someVar" :isBig="false" />
     <ClassesBinding :isPair="false" :isBig="true" />
     <ClassesBinding :isPair="true" :isBig="true" />

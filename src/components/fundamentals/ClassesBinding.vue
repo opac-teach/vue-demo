@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-4">
     <div :class="isPair ? 'bg-red-200' : 'bg-blue-200'">
-      <p>Is pair: {{ isPair }} Is big: {{ isBig }}</p>
+      <p :class="isBig ? 'text-2xl' : 'text-sm'">Is pair: {{ isPair }} Is big: {{ isBig }}</p>
     </div>
 
     <div

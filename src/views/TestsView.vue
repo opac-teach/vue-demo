@@ -18,9 +18,9 @@ import Examples from '@/components/Examples.vue'
 
 const examples = [
   {
-    name: 'Slot',
+    name: 'Tests unitaires',
     description:
-      "Test unitaires, on va verifier qu'un composant isolé fait bien son travail. <br/> On a besoin d'une lib (vue test-utils) pour 'monter' un composant en mémoire et simuler une application",
+      "On va verifier qu'un composant isolé fait bien son travail. <br/> On a besoin d'une lib (vue test-utils) pour 'monter' un composant en mémoire et simuler une application",
     components: [],
     sources: [SlotSource, SlotTestSource],
     sourcesNames: ['Slot', 'Slot.test'],

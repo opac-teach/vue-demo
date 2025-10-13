@@ -1,7 +1,5 @@
 <template>
   <Examples :examples="examples" />
-  <h1 class="">Exercices</h1>
-  <FundamentalsExercices />
 </template>
 
 <script setup lang="ts">
@@ -27,8 +25,6 @@ import SlotSource from '@/components/fundamentals/Slot.vue?raw'
 import Examples from '@/components/Examples.vue'
 import type { ExampleProps } from '@/components/Example.vue'
 import { parse } from '@/lib/md'
-import Exercices from '@/components/Exercices.vue'
-import FundamentalsExercices from '@/components/exercices/Fundamentals.vue'
 
 const examples: Array<ExampleProps> = [
   {
@@ -36,7 +32,7 @@ const examples: Array<ExampleProps> = [
     components: [TemplateSyntax],
     sources: [TemplateSyntaxSource],
     description: parse(`
-Chaque fichier \`.vue\` est un composant, qui est separé en une partie template et une partie script.
+Chaque fichier \`.vue\` est un **composant**, qui est separé en une partie \`<template>\` et une partie \`<script>\`.
 
 La partie template est la partie HTML qui sera affichée.
 
@@ -49,12 +45,12 @@ La partie script est la partie JavaScript qui contient la logique du composant.`
     description: parse(`
 Il est possible d'afficher ou non certains elements en définissant certaines conditions. 
 
-Les attributs v-if v-else-if et v-else fonctionnent comme une structure conditionnelle traditionnelle et affichera l'element qui correspondra aux conditions définies. 
+Les attributs \`v-if\`, \`v-else-if\` et \`v-else\` fonctionnent comme une structure conditionnelle traditionnelle et affichera l'element qui correspondra aux conditions définies. 
 
-L'attribut v-show se comportera comme le v-if, à la difference que l'element sera toujours inclus dans le DOM, seulement caché par du CSS si la condition est fausse. 
+L'attribut \`v-show\` se comportera comme le \`v-if\`, à la difference que l'element sera toujours inclus dans le DOM, seulement caché par du CSS si la condition est fausse. 
 A utiliser pour des elements qui s'affichent/se cachent souvent afin d'économiser du temps de rendering. 
 
-Pour les élements qui s'activent rarement (changement d'onglet par exemple) il est preferable d'utiliser le v-if, qui consommera moins de ressources pour les élements cachés. 
+Pour les élements qui s'activent rarement (changement d'onglet par exemple) il est preferable d'utiliser le \`v-if\`, qui consommera moins de ressources pour les élements cachés. 
 `),
   },
   {
@@ -62,9 +58,9 @@ Pour les élements qui s'activent rarement (changement d'onglet par exemple) il 
     components: [Loops],
     sources: [LoopsSource],
     description: parse(`
-Il arrive souvent de devoir afficher des elements similaires pour une liste de données (liste d'articles, liste de messages ...). On utilisera pour cela des boucles v-for, auquel on passera un tableau d'objets et un composant qui sera utilisé pour chacun de ces objets. 
+Il arrive souvent de devoir afficher des elements similaires pour une liste de données (liste d'articles, liste de messages ...). On utilisera pour cela des boucles \`v-for\`, auquel on passera un tableau d'objets et un composant qui sera utilisé pour chacun de ces objets. 
 
-Il est important de définir une 'key' qui doit être unique pour chaque element de la liste. 
+Il est important de définir une \`key\` qui doit être unique pour chaque element de la liste. 
 `),
   },
   {
@@ -97,7 +93,7 @@ Les classes peuvent etre bindées à des variables dans le template de different
     `),
     components: [PassingProps],
     sources: [ClassesBindingSource, PassingPropsSource],
-    sourcesNames: ['ClassesBinding'],
+    sourcesNames: ['ClassesBinding', 'PassingProps'],
   },
   {
     name: 'Slots',

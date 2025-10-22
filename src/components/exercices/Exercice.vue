@@ -1,16 +1,5 @@
-<template>
-    hello: {{ hello }}
-</template>
+<template>A: {{ a }}</template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
-const hello = ref(0);
-
-onMounted(() => {
-    setInterval(() => {
-        hello.value++
-    }, 1000)
-})
-
+const a = "b"
 </script>

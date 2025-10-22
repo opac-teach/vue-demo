@@ -47,8 +47,11 @@ Pour une variable de type \`ref\` , dans la partie script, on lit/ecrit les vale
   },
   {
     name: 'Binding',
-    description:
-      'le binding sert a lier une variable reactive à un element du DOM, avec mise à jour dans les deux sens.',
+    description: parse(`
+Le binding sert a lier une variable reactive à un element du DOM, avec mise à jour dans les deux sens. 
+
+Pour avoir du "two-way binding", c'est à dire la possibilité de modifier la variable depuis le DOM, on utilisera \`v-model\`
+    `),
     components: [Binding],
     sources: [BindingSource],
   },

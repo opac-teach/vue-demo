@@ -6,11 +6,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
-const input = ref<null | Ref>(null)
+import { useTemplateRef } from 'vue'
+const input = useTemplateRef('input')
 
 const focusInput = () => {
-  input.value.value = 'reset'
-  input.value.focus()
+  if (input.value) {
+    input.value.value = 'reset'
+    input.value.focus()
+  }
 }
 </script>

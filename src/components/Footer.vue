@@ -2,6 +2,7 @@
 
 <template>
   <footer class="flex align-center justify-center bg-base-300 py-4">
+    Timothé Leroy -
     <a href="https://github.com/pacwoodson/vue-demo" target="_blank"
       >Code Source
       <svg

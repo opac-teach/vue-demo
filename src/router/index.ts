@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
+import { useAuthStore } from '@/stores/auth'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -16,6 +18,17 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('@/views/FundamentalsView.vue'),
+    },
+    {
+      path: '/memecoins',
+      name: 'Memecoins',
+      component: () => import('@/views/MemeCoinsView.vue'),
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: () => import('@/views/AuthView.vue'),
+      meta: { hide: true },
     },
     {
       path: '/routing',
@@ -39,6 +52,11 @@ const router = createRouter({
       component: () => import('@/views/ExercicesView.vue'),
     },
     {
+      path: '/exercices/copy',
+      name: 'Exercices copy',
+      component: () => import('@/views/ExercicesView copy.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('@/views/NotFoundView.vue'),
@@ -49,8 +67,15 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  const isLoggedIn = !!authStore.jwtToken // ou une autre propriété selon ton store
+
   if (to.meta.sayHello) {
     console.log('hello !')
+  }
+
+  if (to.path === '/auth' && isLoggedIn) {
+    return next('/')
   }
 
   next()

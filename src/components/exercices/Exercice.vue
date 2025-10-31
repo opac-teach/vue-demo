@@ -1,16 +1,11 @@
 <template>
-    hello: {{ hello }}
+    <Articles />
 </template>
-
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
-const hello = ref(0);
-
-onMounted(() => {
-    setInterval(() => {
-        hello.value++
-    }, 1000)
-})
-
+import Article from './Article.vue';
+import Articles from './Articles.vue';
+import { onUnmounted } from 'vue';
+onUnmounted(() => {
+    alert('vous avez quitté l\'exercice');
+});
 </script>

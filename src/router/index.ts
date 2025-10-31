@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import NewPageView from '../views/NewPageView.vue'
+import { useTokenStore } from '@/stores/token';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +40,25 @@ const router = createRouter({
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),
     },
+
+    {
+      path: '/new',
+      name: 'NewPage',
+      component: NewPageView
+    },
+
+    {
+      path: '/meme-coins',
+      name: 'MemeCoins',
+      component: () => import('@/views/MemeCoinView.vue'),
+    },
+
+    {
+      path: '/authentification',
+      name: 'Authentification',
+      component: () => import('@/views/AuthentificationView.vue'),
+    },
+
     {
       path: '/:pathMatch(.*)*',
       name: '404',
@@ -49,11 +70,14 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
-  if (to.meta.sayHello) {
-    console.log('hello !')
+  const isAuthenticated = useTokenStore().isAuthenticated;
+  if (to.name === 'Authentification' && isAuthenticated === true) {
+    next({ name: 'MemeCoins' });
+  } else if (to.name === 'MemeCoins' && isAuthenticated === false) {
+    next({ name: 'Authentification' });
+  } else {
+    next();
   }
-
-  next()
-})
+});
 
 export default router

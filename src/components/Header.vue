@@ -1,4 +1,4 @@
-<template>
+  <template>
   <header class="navbar bg-base-100 shadow-sm">
     <div class="navbar-start">
       <div class="dropdown">
@@ -25,13 +25,43 @@
     </div>
     <Nav />
     <div class="navbar-end">
+      <p>{{ nickName.nickName }}</p>
+      <button 
+        v-if="!auth.isAuthenticated" 
+        @click="goToLogin"
+      >
+        Login
+      </button>
+      <button 
+        v-if="auth.isAuthenticated" 
+        @click="handleLogout"
+      >
+        Logout
+      </button>
       <DarkModeSwitch />
     </div>
   </header>
 </template>
 
+
 <script setup lang="ts">
 import Nav from '@/components/Nav.vue'
 import NavMobile from '@/components/NavMobile.vue'
 import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+import { useNickName } from '@/stores/nickname.ts'
+import { useAuth } from '@/composables/auth.ts'
+import { useRouter } from 'vue-router'
+
+const auth = useAuth()
+const nickName = useNickName()
+const router = useRouter()
+
+function goToLogin() {
+  router.push('/login')
+}
+
+function handleLogout() {
+  auth.logout()
+  router.push('/')
+}
 </script>

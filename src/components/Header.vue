@@ -25,6 +25,8 @@
     </div>
     <Nav />
     <div class="navbar-end">
+      <p>{{ nickName.nickName }}</p>
+      <button class="btn btn-ghost" @click="jwt.jwt = null" v-if="jwt.jwt">Logout</button>
       <DarkModeSwitch />
     </div>
   </header>
@@ -34,4 +36,9 @@
 import Nav from '@/components/Nav.vue'
 import NavMobile from '@/components/NavMobile.vue'
 import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+import { useNickName } from '@/stores/nicknames.ts'
+import { useJwt } from '@/stores/jwt.ts'
+
+const nickName = useNickName()
+const jwt = useJwt()
 </script>

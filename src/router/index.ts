@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useJwt } from '@/stores/jwt.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,21 @@ const router = createRouter({
       path: '/exercices',
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),
+    },
+    {
+      path: '/new',
+      name: 'new',
+      component: () => import('@/views/NewPageVue.vue'),
+    },
+    {
+      path: '/memecoins',
+      name: 'MemeCoins',
+      component: () => import('@/views/MainCoinsView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/LoginView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',

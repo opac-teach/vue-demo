@@ -11,7 +11,13 @@
 </template>
 
 <script setup lang="ts">
+import { useJwt } from '@/stores/jwt'
+import { computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 const router = useRouter()
-const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+const jwt = useJwt()
+const routes = computed(() => router
+  .getRoutes()
+  .filter((route) => !route.meta?.hide && !(route.meta?.hideIfLoggedIn && jwt.data))
+)
 </script>

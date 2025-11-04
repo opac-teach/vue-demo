@@ -27,11 +27,30 @@
     <div class="navbar-end">
       <DarkModeSwitch />
     </div>
+    <p class="px-4">
+      Welcome, <strong>{{ nickname.data || 'Guest' }}</strong
+      >!
+    </p>
+    <button
+      v-if="jwt.data"
+      @click="
+        () => {
+          jwt.data = null
+        }
+      "
+      class="btn"
+    >
+      Logout
+    </button>
   </header>
 </template>
 
 <script setup lang="ts">
+import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
 import Nav from '@/components/Nav.vue'
 import NavMobile from '@/components/NavMobile.vue'
-import DarkModeSwitch from '@/components/DarkModeSwitch.vue'
+import { useJwt } from '@/stores/jwt'
+import { useNickname } from '@/stores/nickname'
+const jwt = useJwt()
+const nickname = useNickname()
 </script>

@@ -1,3 +1,4 @@
+import { useJwt } from '@/stores/jwt'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -39,6 +40,22 @@ const router = createRouter({
       component: () => import('@/views/ExercicesView.vue'),
     },
     {
+      path: '/hello-world',
+      name: 'HelloWorld',
+      component: () => import('@/views/HelloWorldView.vue'),
+    },
+    {
+      path: '/memecoins',
+      name: 'Memecoins',
+      component: () => import('@/views/MemecoinsView.vue'),
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: () => import('@/views/AuthenticationView.vue'),
+      meta: { hideIfLoggedIn: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('@/views/NotFoundView.vue'),
@@ -51,6 +68,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.sayHello) {
     console.log('hello !')
+  }
+
+  const jwt = useJwt()
+
+  if (jwt.data && to.meta.hideIfLoggedIn) {
+    next({ name: 'Memecoins' })
   }
 
   next()

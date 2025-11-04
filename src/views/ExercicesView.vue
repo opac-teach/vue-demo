@@ -3,5 +3,7 @@
 </template>
 
 <script setup lang="ts">
+
 import Exercices from '@/components/exercices/Exercice.vue'
+
 </script>

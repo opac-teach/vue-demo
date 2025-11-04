@@ -10,8 +10,12 @@ import { onMounted, ref } from 'vue'
 const lorem = ref<string>('loading...')
 
 onMounted(async () => {
-  const data = await fetch('https://lorem-api.com/api/lorem')
+  try {
+  const data = await fetch('https://api.sampleapis.com/rickandmorty/characters')
   const text = await data.text()
   lorem.value = text
+  } catch(error) {
+    lorem.value = error.message
+  }
 })
 </script>

@@ -1,9 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <footer class="flex align-center justify-center bg-base-300 py-4">
-    <a href="https://github.com/pacwoodson/vue-demo" target="_blank"
-      >Code Source
+  <footer class="flex items-center justify-center gap-2 bg-base-300 py-4">
+    <a href="https://github.com/pacwoodson/vue-demo" target="_blank">
+      Code Source
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-4 w-4 inline"
@@ -16,7 +16,10 @@
       >
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
         <polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="10" y1="14" x2="21" y2="3"></line></svg
-    ></a>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    </a>
+
+    <span class="opacity-70">• Réalisé par <strong>Paul Lamarque</strong></span>
   </footer>
 </template>

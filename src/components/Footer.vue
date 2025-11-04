@@ -3,7 +3,7 @@
 <template>
   <footer class="flex align-center justify-center bg-base-300 py-4">
     <a href="https://github.com/pacwoodson/vue-demo" target="_blank"
-      >Code Source
+      >Code Source mael
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-4 w-4 inline"

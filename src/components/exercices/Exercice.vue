@@ -1,16 +1,46 @@
 <template>
-    hello: {{ hello }}
+  <p>Nom d'utilisateur : {{ usernameStore.username }}</p>
+  <input class="input" name="name" v-model="username"></input>
+  <button class="btn" @click="usernameStore.setUsernameExo(username)">Changer le nom d'utilisateur</button>
+  <ul>
+        <div v-for="character in characters" :key="character.id">
+            <li>
+                <Article :article="character"></Article>
+            </li>
+        </div>
+    </ul>
+
+    <ul>
+        <div v-for="character in characters" :key="character.id">
+            <li>
+                <Article :article="character"></Article>
+            </li>
+        </div>
+    </ul>
+
+    
+    
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { format } from 'path';
+import Article from './Article.vue';
+import {ref, computed, onMounted} from 'vue'
+import { useUsernameStoreExo } from '@/stores/UsernameExo';
 
-const hello = ref(0);
+const usernameStore = useUsernameStoreExo()
 
-onMounted(() => {
-    setInterval(() => {
-        hello.value++
-    }, 1000)
+const characters = ref([]);
+
+const username = ref('');
+
+onMounted(async () => {
+  try{
+    const data = await fetch('https://api.sampleapis.com/rickandmorty/characters')
+    const val = await data.json()
+    characters.value = val
+  } catch (error) {
+    characters.value = error.message
+  }
 })
-
 </script>

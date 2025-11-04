@@ -8,10 +8,21 @@
       </li>
     </ul>
   </div>
+  <div>
+    <button v-if="auth.isAuthenticated()" @click="handleLogout">Déconnexion</button>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 const router = useRouter()
 const routes = router.getRoutes().filter((route) => !route.meta?.hide)
+
+const auth = useAuthStore()
+
+function handleLogout() {
+  auth.logout()              
+  router.push('/connexion')  
+}
 </script>

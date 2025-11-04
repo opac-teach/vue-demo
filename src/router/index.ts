@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,9 +13,6 @@ const router = createRouter({
     {
       path: '/fundamentals',
       name: 'Fundamentals',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('@/views/FundamentalsView.vue'),
     },
     {
@@ -39,6 +37,18 @@ const router = createRouter({
       component: () => import('@/views/ExercicesView.vue'),
     },
     {
+      path: '/mapage',
+      name: 'mapage',
+      component: () => import('@/views/MapageView.vue'),
+      meta: { requiresAuth: true }
+  },
+     {
+      path: '/connexion',
+      name: 'connexion',
+      component: () => import('@/views/ConnexionView.vue'),
+      meta: { requiresGuest: true },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('@/views/NotFoundView.vue'),
@@ -46,12 +56,14 @@ const router = createRouter({
     },
   ],
 })
-
-// Navigation guard
 router.beforeEach((to, from, next) => {
-  if (to.meta.sayHello) {
-    console.log('hello !')
-  }
+  const auth = useAuthStore()
+  console.log('Route:', to.path, 'isAuthenticated:', auth.isAuthenticated())
+
+  if (to.meta.requiresGuest && auth.isAuthenticated()) return next('/')
+
+
+  if (to.meta.requiresAuth && !auth.isAuthenticated()) return next('/connexion')
 
   next()
 })

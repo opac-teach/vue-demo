@@ -44,6 +44,16 @@ const router = createRouter({
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
     },
+    {
+      path: '/memecoin',
+      name: 'memecoin',
+      component: () => import('@/views/MemecoinPage.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/LoginPage.vue'),
+    },
   ],
 })
 

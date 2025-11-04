@@ -15,7 +15,7 @@ export const useUIStore = defineStore('ui', () => {
     if (storedPreference !== null) {
       isDarkMode.value = storedPreference === 'true'
     } else {
-      // Use system preference as default
+      
       isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
     }
     document.documentElement.classList.toggle('dark', isDarkMode.value)

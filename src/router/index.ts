@@ -33,10 +33,30 @@ const router = createRouter({
       name: 'Tests',
       component: () => import('@/views/TestsView.vue'),
     },
+
+    {
+      path: '/oklm',
+      name: 'oklm',
+      component: () => import('@/views/OklmView.vue'),
+    },
+
+
+    
     {
       path: '/exercices',
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),
+    },
+    {
+      path: '/memecoins',
+      name: 'Memecoins',
+      component: () => import('@/views/MemecoinsView.vue'),
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: () => import('@/views/AuthView.vue'),
+      meta: { hide: true },
     },
     {
       path: '/:pathMatch(.*)*',

@@ -12,9 +12,6 @@ const router = createRouter({
     {
       path: '/fundamentals',
       name: 'Fundamentals',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('@/views/FundamentalsView.vue'),
     },
     {
@@ -37,6 +34,26 @@ const router = createRouter({
       path: '/exercices',
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),
+    },
+    {
+      path: '/paolo', // 👈 ton chemin personnalisé
+      name: 'Paolo',
+      component: () => import('@/views/PaoloPage.vue'),
+    },
+    {
+      path: '/Characters', // 👈 ton chemin personnalisé
+      name: 'Characters',
+      component: () => import('@/components/Characters.vue'),
+    },
+    {
+      path: '/Ajouter un nom', // 👈 ton chemin personnalisé
+      name: 'Username',
+      component: () => import('@/components/exercices/AddUsername.vue'),
+    },
+    {
+      path: '/Memecoins', // 👈 ton chemin personnalisé
+      name: 'Memecoins',
+      component: () => import('@/components/Memecoins.vue'),
     },
     {
       path: '/:pathMatch(.*)*',

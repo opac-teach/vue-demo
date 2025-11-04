@@ -5,7 +5,9 @@
         <RouterLink :to="route.path" active-class="bg-neutral text-neutral-content">
           {{ route.name }}
         </RouterLink>
+
       </li>
+
     </ul>
   </div>
 </template>

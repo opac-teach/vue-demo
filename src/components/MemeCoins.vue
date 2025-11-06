@@ -12,22 +12,30 @@
       </div>
     </div>
 
-    <h2>Ajouter un memecoin</h2>
-    <form @submit.prevent="addMemeCoin" class="form">
-      <input v-model="newMeme.name" type="text" placeholder="Nom du memecoin" class="input" />
-      <span v-if="errors.name" class="error">{{ errors.name }}</span>
+    <template v-if="authStore.isLoggedIn">
+      <h2>Ajouter un memecoin</h2>
+      <form @submit.prevent="addMemeCoin" class="form">
+        <input v-model="newMeme.name" type="text" placeholder="Nom du memecoin" class="input" />
+        <span v-if="errors.name" class="error">{{ errors.name }}</span>
 
-      <input v-model="newMeme.symbol" type="text" placeholder="Symbole" class="input" />
-      <span v-if="errors.symbol" class="error">{{ errors.symbol }}</span>
+        <input v-model="newMeme.symbol" type="text" placeholder="Symbole" class="input" />
+        <span v-if="errors.symbol" class="error">{{ errors.symbol }}</span>
 
-      <input v-model="newMeme.description" type="text" placeholder="Description" class="input" />
-      <span v-if="errors.description" class="error">{{ errors.description }}</span>
+        <input v-model="newMeme.description" type="text" placeholder="Description" class="input" />
+        <span v-if="errors.description" class="error">{{ errors.description }}</span>
 
-      <input v-model="newMeme.logoUrl" type="text" placeholder="URL du logo" class="input" />
-      <span v-if="errors.logoUrl" class="error">{{ errors.logoUrl }}</span>
+        <input v-model="newMeme.logoUrl" type="text" placeholder="URL du logo" class="input" />
+        <span v-if="errors.logoUrl" class="error">{{ errors.logoUrl }}</span>
 
-      <button type="submit" class="btn">Ajouter</button>
-    </form>
+        <button type="submit" class="btn">Ajouter</button>
+      </form>
+    </template>
+    <template v-else>
+      <div class="login-prompt">
+        <p>Connectez-vous pour créer un memecoin</p>
+        <router-link to="/login" class="btn">Se connecter</router-link>
+      </div>
+    </template>
 
     <p v-if="apiMessage" :class="{ success: apiSuccess, error: !apiSuccess }">{{ apiMessage }}</p>
   </div>
@@ -36,8 +44,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useMemecoinsStore, Memecoin } from '@/stores/memecoins'
+import { useAuthStore } from '@/stores/auth'
 
 const memecoinsStore = useMemecoinsStore()
+const authStore = useAuthStore()
 
 const newMeme = ref<Memecoin>({
   name: '',
@@ -80,12 +90,19 @@ const addMemeCoin = async () => {
   if (!validate()) return
 
   try {
-    const res = await fetch('https://nuxt-demo-blush.vercel.app/api/create-memecoin', {
+    const res = await fetch('https://nuxt-demo-blush.vercel.app/api/create-memecoin-protected', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}` // Ajout du token d'authentification
+      },
       body: JSON.stringify(newMeme.value)
     })
-    if (!res.ok) throw new Error('Erreur API')
+
+    if (!res.ok) {
+      const errorData = await res.json()
+      throw new Error(errorData.message || 'Erreur API')
+    }
 
     const created = await res.json()
     memecoinsStore.addCoin(created)

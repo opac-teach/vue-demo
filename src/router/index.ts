@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useMemecoinsStore } from '@/stores/memecoins'
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -36,24 +38,40 @@ const router = createRouter({
       component: () => import('@/views/ExercicesView.vue'),
     },
     {
-      path: '/paolo', // 👈 ton chemin personnalisé
+      path: '/paolo',
       name: 'Paolo',
       component: () => import('@/views/PaoloPage.vue'),
     },
     {
-      path: '/Characters', // 👈 ton chemin personnalisé
+      path: '/Characters',
       name: 'Characters',
       component: () => import('@/components/Characters.vue'),
     },
     {
-      path: '/Ajouter un nom', // 👈 ton chemin personnalisé
+      path: '/Ajouter un nom',
       name: 'Username',
       component: () => import('@/components/exercices/AddUsername.vue'),
     },
     {
-      path: '/Memecoins', // 👈 ton chemin personnalisé
+      path: '/Memecoins',
       name: 'Memecoins',
       component: () => import('@/components/Memecoins.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/components/auth.vue'),
+      meta: {
+        hide: true,
+      },
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.isLoggedIn) {
+          next('/')
+        } else {
+          next()
+        }
+      },
     },
     {
       path: '/:pathMatch(.*)*',
@@ -66,11 +84,16 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
   if (to.meta.sayHello) {
     console.log('hello !')
   }
 
-  next()
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router

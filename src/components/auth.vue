@@ -21,10 +21,9 @@ const error = ref('')
 
 // Rediriger si déjà connecté
 if (authStore.isLoggedIn) {
-  router.push('/') // ou une autre page
+  router.push('/')
 }
 
-// Soumettre le mot de passe
 const submitLogin = async () => {
   error.value = ''
   if (!password.value) {
@@ -33,18 +32,11 @@ const submitLogin = async () => {
   }
 
   try {
-    const res = await fetch('https://nuxt-demo-blush.vercel.app/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: password.value })
-    })
-    if (!res.ok) throw new Error('Mot de passe incorrect')
-    const data = await res.json()
-
-    authStore.login(data.token, data.userId)
-    router.push('/') // redirige vers la page principale
+    // Utiliser directement la méthode login du store
+    await authStore.login(password.value)
+    router.push('/')
   } catch (err: any) {
-    error.value = err.message || 'Erreur de connexion'
+    error.value = 'Mot de passe incorrect'
   }
 }
 </script>

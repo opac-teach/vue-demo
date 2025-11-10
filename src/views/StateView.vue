@@ -48,7 +48,7 @@ Pour une variable de type \`ref\` , dans la partie script, on lit/ecrit les vale
   {
     name: 'Binding',
     description: parse(`
-Le binding sert a lier une variable reactive à un element du DOM, avec mise à jour dans les deux sens. 
+Le binding sert a lier une variable reactive à un element du DOM, avec mise à jour dans les deux sens.
 
 Pour avoir du "two-way binding", c'est à dire la possibilité de modifier la variable depuis le DOM, on utilisera \`v-model\`
     `),
@@ -77,7 +77,7 @@ Les stores [Pinia](https://pinia.vuejs.org) sont des fonctions qui contiennent u
   {
     name: 'Data Fetching',
     description: parse(`
-Pour récupérer des données externes, on fera des appels API à un serveur. Ces appels ne peuvent être effectués qu'apres la page chargée, donc la page initiale ne pourra pas contenir la données. 
+Pour récupérer des données externes, on fera des appels API à un serveur. Ces appels ne peuvent être effectués qu'apres la page chargée, donc la page initiale ne pourra pas contenir la données.
 `),
     components: [DataFetching],
     sources: [DataFetchingSource],

@@ -34,15 +34,30 @@ const router = createRouter({
       component: () => import('@/views/TestsView.vue'),
     },
     {
+      path: '/mapage',
+      name: 'Mapage',
+      component: () => import('@/views/MapageView.vue'),
+    },
+    {
       path: '/exercices',
       name: 'Exercices',
       component: () => import('@/views/ExercicesView.vue'),
+    },
+    {
+      path: '/memecoins',
+      name: 'Memecoins',
+      component: () => import('@/views/MemecoinsView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
       name: '404',
       component: () => import('@/views/NotFoundView.vue'),
       meta: { hide: true },
+    },
+    {
+      path: '/login',
+      name: 'Login',
+     component: () => import('@/views/LoginView.vue'),
     },
   ],
 })
